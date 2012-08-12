@@ -52,5 +52,8 @@
 	require_once 'tokenHandlers/T_OPEN_TAG.php';
 	TokenHandlers\openTagHandler::getInstance();
 	
+	require_once 'tokenHandlers/T_WHITESPACE.php';
+	TokenHandlers\whitespaceHandler::getInstance();
+	
 	new CLI;
 ?>
