@@ -47,6 +47,7 @@
 	require_once 'VMException.class.php';
 	require_once 'token.class.php';
 	require_once 'tokenVM.class.php';
+	require_once 'tokenHandler.interface.php';
 	
 	require_once 'tokenHandlers/T_OPEN_TAG.php';
 	TokenHandlers\openTagHandler::getInstance();

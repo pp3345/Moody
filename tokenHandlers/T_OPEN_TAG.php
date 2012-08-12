@@ -8,7 +8,7 @@
 	
 	namespace Moody\TokenHandlers;
 	
-	class openTagHandler {
+	class openTagHandler implements \Moody\TokenHandler {
 		private static $instance = null;
 		
 		public static function getInstance() {
@@ -21,7 +21,7 @@
 			\Moody\TokenVM::globalRegisterTokenHandler(T_OPEN_TAG, $this);
 		}
 		
-		public function execute(\Moody\Token $token) {
+		public function execute(\Moody\Token $token, \Moody\TokenVM $vm) {
 			if($token->content == '<?' || $token->content == '<%')
 				$token->content = '<?php';
 			

@@ -54,7 +54,7 @@
 						$nToken = clone $token;
 						
 						if(is_callable(array($executor, 'register')))
-							$executor->register($token);
+							$executor->register($token, $this);
 						
 						$token = $nToken;
 					}
@@ -108,7 +108,7 @@
 			if(!is_callable(array($executor, 'execute')))
 				throw new VMException('The execute method of the token handler does not exist or is not callable from the virtual machines\' scope', $token);
 			
-			$newRetval = $executor->execute($token);
+			$newRetval = $executor->execute($token, $this);
 			
 			if($newRetval & self::CLEAR_RETVAL)
 				$retval = $newRetval;
