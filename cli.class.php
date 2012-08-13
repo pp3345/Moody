@@ -101,5 +101,8 @@
 	require_once 'instructionHandlers/isdefined.php';
 	InstructionHandlers\IsDefinedHandler::getInstance();
 	
+	require_once 'instructionHandlers/macro.php';
+	InstructionHandlers\MacroHandler::getInstance();
+	
 	new CLI;
 ?>

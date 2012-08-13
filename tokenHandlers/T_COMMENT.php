@@ -91,7 +91,10 @@
 		}
 		
 		public function parseArguments(Token $origToken, $instructionName, $options) {
-			$options = str_split($options);
+			if($options)
+				$options = str_split($options);
+			else
+				$options = array();
 			
 			$content = str_replace(array("//", "/*", "*/", "#"), "", $origToken->content);
 			$instructionArgs = substr($origToken->content, strpos($origToken->content, $instructionName) + strlen($instructionName));

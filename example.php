@@ -47,6 +47,14 @@ echo /* .constant("ABC") */;
 // .if(/* .isDefined("PHP_OS") */)
  echo '.isDefined = working.';
 // .endif
+// .macro("myMacro", 'for($i = 0; $i < 10; $i++) echo "Pancake";')
+// .macro("complexMacro", 'if($n) echo $x;', '$n', '$x')
+ echo 'blabla';
+// .myMacro
+
+$a = 4;
+$b = "Hello world!";
+// .complexMacro($a, $b)
 // .halt
 // .unhandledInstruction
 ?>
