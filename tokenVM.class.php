@@ -137,9 +137,7 @@
 				goto executeToken; 
 			}
 			
-			if($retval & self::DELETE_TOKEN)
-				unset($this->tokenArray[$token->id]);
-			else
+			if(!($retval & self::DELETE_TOKEN))
 				$newArray[] = $token;
 			
 			if($retval & self::QUIT)

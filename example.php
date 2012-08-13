@@ -20,12 +20,17 @@
 echo 'Some Code';
 echo /* .constant("ABC") */;
 // .undefine("ABC")
+// .label("someLabel")
 // .ifdef("ABC")
  echo 'Trolol';
 // .endif
 // .ifndef("ABC")
  // .def("ABC", 'Pancake')
  echo /* .constant('ABC') */;
+// .endif
+// .ifndef("JUMPED_TO_SOMELABEL")
+ // .def("JUMPED_TO_SOMELABEL", 1)
+ // .goto("someLabel")
 // .endif
 // .halt
 // .unhandledInstruction

@@ -89,5 +89,11 @@
 	require_once 'instructionHandlers/ifndef.php';
 	InstructionHandlers\IfNotDefHandler::getInstance();
 	
+	require_once 'instructionHandlers/label.php';
+	InstructionHandlers\LabelHandler::getInstance();
+	
+	require_once 'instructionHandlers/goto.php';
+	InstructionHandlers\GotoHandler::getInstance();
+	
 	new CLI;
 ?>
