@@ -44,6 +44,9 @@ echo /* .constant("ABC") */;
 // .if(/* .constant("T_LNUMBER") */ == 305)
  echo 'Inline instructions are working :D';
 // .endif
+// .if(/* .isDefined("PHP_OS") */)
+ echo '.isDefined = working.';
+// .endif
 // .halt
 // .unhandledInstruction
 ?>

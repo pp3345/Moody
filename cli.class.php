@@ -98,5 +98,8 @@
 	require_once 'instructionHandlers/if.php';
 	InstructionHandlers\IfHandler::getInstance();
 	
+	require_once 'instructionHandlers/isdefined.php';
+	InstructionHandlers\IsDefinedHandler::getInstance();
+	
 	new CLI;
 ?>
