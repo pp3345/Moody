@@ -83,5 +83,8 @@
 	require_once 'instructionHandlers/constant.php';
 	InstructionHandlers\GetConstantHandler::getInstance();
 	
+	require_once 'instructionHandlers/undefine.php';
+	InstructionHandlers\UndefineHandler::getInstance();
+	
 	new CLI;
 ?>

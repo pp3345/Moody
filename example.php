@@ -19,6 +19,10 @@
 // Normal comment
 echo 'Some Code';
 echo /* .constant("ABC") */;
+// .undefine("ABC")
+// .ifdef("ABC")
+ echo 'Trolol';
+// .endif
 // .halt
 // .unhandledInstruction
 ?>
