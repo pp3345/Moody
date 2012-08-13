@@ -61,6 +61,9 @@ $b = "Hello world!";
 // .elseif(true == true)
  myfunc2();
 // .endif
+// .if(/* .eval('return mt_rand(0, 100) > 50; // .constant', false) */)
+ echo 'mt_rand() returned a value greater than 50!';
+ // .endif
 // .halt
 // .unhandledInstruction
 ?>

@@ -90,15 +90,23 @@
 			$this->handlerStack[$instruction] = $handler;
 		}
 		
-		public function parseArguments(Token $origToken, $instructionName, $options) {
-			if($options)
-				$options = str_split($options);
+		public function parseArguments(Token $origToken, $instructionName, $optionsStr) {
+			if($optionsStr)
+				$options = str_split($optionsStr);
 			else
 				$options = array();
 			
-			$content = str_replace(array("//", "/*", "*/", "#"), "", $origToken->content);
-			$instructionArgs = substr($origToken->content, strpos($origToken->content, $instructionName) + strlen($instructionName));
+			if(!strpos($origToken->content, $instructionName))
+				throw new InstructionProcessorException('Token corrupted', $origToken);
 			
+			if(substr($origToken->content, 0, 2) == '/*')
+				$content = substr($origToken->content, 2, strrpos($origToken->content, '*/') - 2);
+			else if(substr($origToken->content, 0, 1) == '#')
+				$content = substr($origToken->content, 1);
+			else
+				$content = substr($origToken->content, 2);
+			$instructionArgs = substr($content, strpos($content, $instructionName) + strlen($instructionName));
+
 			// Tokenize
 			$tokens = Token::tokenize('<?php ' . $instructionArgs . ' ?>');
 			
@@ -115,23 +123,34 @@
 				|| $token->type == T_WHITESPACE)
 					continue;
 				
-				$tokenValue = $token->content;
-
-				if($token->type == T_STRING && ConstantContainer::isDefined($token->content))
-					$tokenValue = ConstantContainer::getConstant($token->content);
-				else if($token->type == T_CONSTANT_ENCAPSED_STRING)
-					$tokenValue = eval('return ' . $token->content . ';');
-				else if($token->type == T_TRUE)
-					$tokenValue = true;
-				else if($token->type == T_FALSE)
-					$tokenValue = false;
-				else if($token->type == T_LNUMBER)
-					$tokenValue = (int) $token->content;
-				else if($token->type == T_DNUMBER)
-					$tokenValue = (float) $token->content;
-				else if($token->type == T_COMMENT) {
-					$this->inlineExecute($token);
-					$tokenValue = $token->content;
+				switch($token->type) {
+					case T_STRING:
+						if(ConstantContainer::isDefined($token->content))
+							$tokenValue = ConstantContainer::getConstant($token->content);
+						break;
+					case T_CONSTANT_ENCAPSED_STRING:
+						$tokenValue = eval('return ' . $token->content . ';');
+						break;
+					case T_TRUE:
+						$tokenValue = true;
+						break;
+					case T_FALSE:
+						$tokenValue = false;
+						break;
+					case T_LNUMBER:
+						$tokenValue = (int) $token->content;
+						break;
+					case T_DNUMBER:
+						$tokenValue = (float) $token->content;
+						break;
+					case T_NULL:
+						$tokenValue = null;
+						break;
+					case T_COMMENT:
+						$this->inlineExecute($token);
+						/* fallthrough */
+					default:
+						$tokenValue = $token->content;
 				}
 				
 				parseArg:
@@ -148,19 +167,19 @@
 						case 'n':
 							if(is_numeric($tokenValue) && is_string($tokenValue))
 								$args[] = (float) $tokenValue;
-							else if(is_int($tokenValue) || is_float($tokenValue))
+							else if(is_int($tokenValue) || is_float($tokenValue) || $tokenValue === null)
 								$args[] = $tokenValue;
 							else
 								throw new InstructionProcessorException('Illegal argument ' . ($argNum + 1). ' for ' . $instructionName . ': ' . $token->content . ' given, number expected' , $origToken);
 							break;
 						case 's':
-							if(is_string($tokenValue) && ($token->type == T_STRING || $token->type == T_CONSTANT_ENCAPSED_STRING))
+							if((is_string($tokenValue) && ($token->type == T_STRING || $token->type == T_CONSTANT_ENCAPSED_STRING)) || $tokenValue === null)
 								$args[] = $tokenValue;
 							else
 								throw new InstructionProcessorException('Illegal argument ' . ($argNum + 1). ' for ' . $instructionName . ': ' . $token->content . ' given, string expected' , $origToken);
 							break;
 						case 'b':
-							if(is_bool($tokenValue))
+							if(is_bool($tokenValue) || $tokenValue === null)
 								$args[] = $tokenValue;
 							else
 								throw new InstructionProcessorException('Illegal argument ' . ($argNum + 1). ' for ' . $instructionName . ': ' . $token->content . ' given, bool expected' , $origToken);
@@ -173,7 +192,7 @@
 				$argNum++;
 			}
 			
-			if(!$optionsOffset && $argNum < count($options))
+			if((strpos($optionsStr, '?') !== false && $argNum < strpos($optionsStr, '?')) || ($argNum < count($options) && strpos($optionsStr, '?') === false))
 				throw new InstructionProcessorException($instructionName . ' expects ' . count($options) . ' arguments, ' . $argNum . ' given', $origToken);
 			
 			return $args;

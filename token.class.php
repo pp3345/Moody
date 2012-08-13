@@ -15,6 +15,7 @@
 	define('T_COMMA', 16388);
 	define('T_TRUE', 16389);
 	define('T_FALSE', 16390);
+	define('T_NULL', 16391);
 	
 	class Token {
 		public $id = 0;
@@ -63,6 +64,8 @@
 						$tokenObject->type = T_TRUE;
 					else if(strtolower($tokenObject->content) == 'false')
 						$tokenObject->type = T_FALSE;
+					else if(strtolower($tokenObject->content) == 'null')
+						$tokenObject->type = T_NULL;
 				} else if($token == '.') {
 					$tokenObject->type = \T_DOT;
 					$tokenObject->content = '.';
@@ -108,6 +111,8 @@
 				return "true";
 			if($value === false)
 				return "false";
+			if($value === null)
+				return "null";
 		}
 	}
 ?>

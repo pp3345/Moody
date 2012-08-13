@@ -107,5 +107,8 @@
 	require_once 'instructionHandlers/elseif.php';
 	InstructionHandlers\ElseIfHandler::getInstance();
 	
+	require_once 'instructionHandlers/eval.php';
+	InstructionHandlers\EvalHandler::getInstance();
+	
 	new CLI;
 ?>
