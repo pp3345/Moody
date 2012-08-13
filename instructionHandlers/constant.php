@@ -31,7 +31,7 @@
 			return self::$instance;
 		}
 	
-		public function execute(Token $token, $instructionName, InstructionProcessor $processor, TokenVM $vm) {
+		public function execute(Token $token, $instructionName, InstructionProcessor $processor, TokenVM $vm = null) {
 			$args = $processor->parseArguments($token, $instructionName, 's');
 				
 			if(!ConstantContainer::isDefined($args[0]))
@@ -42,6 +42,10 @@
 			$token->content = Token::makeEvaluatable($constValue);
 			
 			return 0;
+		}
+		
+		public function inlineExecute(Token $token, $instructionName, InstructionProcessor $processor) {
+			$this->execute($token, $instructionName, $processor);
 		}
 	}
 ?>

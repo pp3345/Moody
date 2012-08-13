@@ -38,6 +38,12 @@ echo /* .constant("ABC") */;
   echo 'if is really working :D';
  // .endif
 // .endif
+// .if(PHP_OS == "WINNT")
+ echo 'You are using Windows! :O';
+// .endif
+// .if(/* .constant("T_LNUMBER") */ == 305)
+ echo 'Inline instructions are working :D';
+// .endif
 // .halt
 // .unhandledInstruction
 ?>

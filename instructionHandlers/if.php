@@ -56,7 +56,7 @@
 						
 						$cond .= $arg;
 					}
-
+					
 					eval('$result = (bool) (' . $cond . ');');
 					
 					if($result === true)

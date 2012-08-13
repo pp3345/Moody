@@ -104,6 +104,10 @@
 				return "'" . str_replace("'", "\'", $value) . "'";
 			if(is_int($value) || is_float($value))
 				return $value;
+			if($value === true)
+				return "true";
+			if($value === false)
+				return "false";
 		}
 	}
 ?>

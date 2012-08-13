@@ -69,6 +69,23 @@
 			}
 		}
 		
+		private function inlineExecute(Token $token) {
+			$content = str_replace(array("//", "/*", "*/", "#"), "", $token->content);
+				
+			$matches = array();
+				
+			if(preg_match('~[.][a-zA-Z]+~', $content, $matches)) {
+				$instruction = strtolower(str_replace('.', '', $matches[0]));
+			
+				if(isset($this->handlerStack[$instruction])) {
+					if(!is_callable(array($this->handlerStack[$instruction], 'inlineExecute')))
+						throw new InstructionProcessorException('Handler for instruction "' . $matches[0] . '" does not have an inline execution handler or is not callable', $token);
+					$this->handlerStack[$instruction]->inlineExecute($token, $matches[0], $this);
+				} else if(!Configuration::get('ignoreunknowninstruction', false))
+					throw new InstructionProcessorException('Unknown instruction "' . $matches[0] . '"', $token);
+			}
+		}
+		
 		public function registerHandler($instruction, InstructionHandler $handler) {
 			$this->handlerStack[$instruction] = $handler;
 		}
@@ -96,6 +113,7 @@
 					continue;
 				
 				$tokenValue = $token->content;
+
 				if($token->type == T_STRING && ConstantContainer::isDefined($token->content))
 					$tokenValue = ConstantContainer::getConstant($token->content);
 				else if($token->type == T_CONSTANT_ENCAPSED_STRING)
@@ -108,6 +126,10 @@
 					$tokenValue = (int) $token->content;
 				else if($token->type == T_DNUMBER)
 					$tokenValue = (float) $token->content;
+				else if($token->type == T_COMMENT) {
+					$this->inlineExecute($token);
+					$tokenValue = $token->content;
+				}
 				
 				parseArg:
 				
