@@ -89,5 +89,12 @@
 			
 			return $string;
 		}
+		
+		public static function makeEvaluatable($value) {
+			if(is_string($value))
+				return "'" . str_replace("'", "\'", $value) . "'";
+			if(is_int($value) || is_float($value))
+				return $value;
+		}
 	}
 ?>

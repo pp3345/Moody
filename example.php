@@ -18,6 +18,7 @@
 // .endif
 // Normal comment
 echo 'Some Code';
+echo /* .constant("ABC") */;
 // .halt
 // .unhandledInstruction
 ?>

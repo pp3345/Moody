@@ -11,6 +11,12 @@
 	class ConstantContainer {
 		private static $constants = array();
 		
+		public static function initialize() {
+			foreach(get_defined_constants() as $constantName => $constantValue)
+				if(!self::isDefined($constantName))
+					self::define($constantName, $constantValue);
+		}
+		
 		public static function getConstant($name) {
 			if(isset(self::$constants[$name]))
 				return self::$constants[$name];

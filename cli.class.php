@@ -52,6 +52,8 @@
 	require_once 'instructionProcessorException.class.php';
 	require_once 'instructionHandler.interface.php';
 	require_once 'constantContainer.class.php';
+	ConstantContainer::initialize();
+	
 	require_once 'ifInstruction.class.php';
 	
 	require_once 'tokenHandlers/T_OPEN_TAG.php';
@@ -77,6 +79,9 @@
 	
 	require_once 'instructionHandlers/else.php';
 	InstructionHandlers\ElseHandler::getInstance();
+	
+	require_once 'instructionHandlers/constant.php';
+	InstructionHandlers\GetConstantHandler::getInstance();
 	
 	new CLI;
 ?>

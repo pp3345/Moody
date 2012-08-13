@@ -48,7 +48,8 @@
 					$vmRetval = $this->handlerStack[$instruction]->execute($token, $matches[0], $this, $vm);
 				} else if(!Configuration::get('ignoreunknowninstruction', false))
 					throw new InstructionProcessorException('Unknown instruction "' . $matches[0] . '"', $token);
-			}
+			} else if(Configuration::get('deletecomments', false))
+				$vmRetval = TokenVM::DELETE_TOKEN;
 	
 			return TokenVM::NEXT_HANDLER | TokenVM::NEXT_TOKEN | $vmRetval;
 		}
@@ -97,9 +98,8 @@
 				$tokenValue = $token->content;
 				if($token->type == T_STRING && ConstantContainer::isDefined($token->content))
 					$tokenValue = ConstantContainer::getConstant($token->content);
-				else if($token->type == T_CONSTANT_ENCAPSED_STRING) {
+				else if($token->type == T_CONSTANT_ENCAPSED_STRING || $token->type == T_LNUMBER || $token->type == T_DNUMBER)
 					eval('$tokenValue = ' . $token->content . ';');
-				}
 				
 				parseArg:
 				
