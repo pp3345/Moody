@@ -24,7 +24,13 @@
 		private static $files = 0;
 		private static $typeNames = array(
 				T_ABSTRACT => "T_ABSTRACT",
-				T_AND_EQUAL => "T_AND_EQUAL"
+				T_AND_EQUAL => "T_AND_EQUAL",
+				T_COMMA => "T_COMMA",
+				T_COMMENT => "T_COMMENT",
+				T_DOT => "T_DOT",
+				T_ROUND_BRACKET_CLOSE => "T_ROUND_BRACKET_CLOSE",
+				T_ROUND_BRACKET_OPEN => "T_ROUND_BRACKET_OPEN",
+				T_UNKNOWN => "T_UNKNOWN"
 				/* To be continued */);
 		
 		public static function tokenize($code, $file = null) {

@@ -22,7 +22,7 @@
 		
 		public static function setEndToken(Token $token) {
 			if(!self::$nestedStack)
-				throw new InstructionProcessorException('Endif while no if is active', $token);
+				throw new InstructionProcessorException('Endif or Else while no if is active', $token);
 			
 			end(self::$nestedStack);
 			

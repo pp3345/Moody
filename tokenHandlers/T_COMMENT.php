@@ -50,7 +50,7 @@
 					throw new InstructionProcessorException('Unknown instruction "' . $matches[0] . '"', $token);
 			}
 	
-			return TokenVM::NEXT_HANDLER | TokenVM::NEXT_TOKEN | TokenVM::DELETE_TOKEN | $vmRetval;
+			return TokenVM::NEXT_HANDLER | TokenVM::NEXT_TOKEN | $vmRetval;
 		}
 		
 		public function register(Token $token, TokenVM $vm) {
@@ -97,7 +97,7 @@
 				$tokenValue = $token->content;
 				if($token->type == T_STRING && ConstantContainer::isDefined($token->content))
 					$tokenValue = ConstantContainer::getConstant($token->content);
-				if($token->type == T_CONSTANT_ENCAPSED_STRING) {
+				else if($token->type == T_CONSTANT_ENCAPSED_STRING) {
 					eval('$tokenValue = ' . $token->content . ';');
 				}
 				
@@ -119,7 +119,7 @@
 								throw new InstructionProcessorException('Illegal argument ' . ($argNum + 1). ' for ' . $instructionName . ': ' . $token->content . ' given, number expected' , $origToken);
 							break;
 						case 's':
-							if(is_string($tokenValue))
+							if(is_string($tokenValue) && ($token->type == T_STRING || $token->type == T_CONSTANT_ENCAPSED_STRING))
 								$args[] = $tokenValue;
 							else
 								throw new InstructionProcessorException('Illegal argument ' . ($argNum + 1). ' for ' . $instructionName . ': ' . $token->content . ' given, string expected' , $origToken);

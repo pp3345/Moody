@@ -29,7 +29,7 @@
 		}
 
 		public function execute(Token $token, $instructionName, InstructionProcessor $processor, TokenVM $vm) {
-			return TokenVM::QUIT;
+			return TokenVM::QUIT | TokenVM::DELETE_TOKEN;
 		}
 	}
 ?>

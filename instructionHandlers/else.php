@@ -2,35 +2,36 @@
 
 	/****************************************************************/
 	/* Moody                                                        */
-	/* endif.php                 					                */
+	/* else.php                 					                */
 	/* 2012 Yussuf Khalil                                           */
 	/****************************************************************/
 	
 	namespace Moody\InstructionHandlers;
 	
-	use Moody\TokenHandlers\InstructionProcessor;
+	use Moody\InstructionProcessorException;
+	use Moody\IfInstruction;
 	use Moody\InstructionHandlerWithRegister;
 	use Moody\Token;
+	use Moody\TokenHandlers\InstructionProcessor;
 	use Moody\TokenVM;
-	use Moody\IfInstruction;
-
-	class EndIfHandler implements InstructionHandlerWithRegister {
-		private static $instance;
-		
+	
+	class ElseHandler implements InstructionHandlerWithRegister {
+		private static $instance = null;
+	
 		private function __construct() {
-			InstructionProcessor::getInstance()->registerHandler('endif', $this);
+			InstructionProcessor::getInstance()->registerHandler('else', $this);
 		}
-		
-		public function execute(Token $token, $instructionName, InstructionProcessor $processor, TokenVM $vm) {
-			return TokenVM::DELETE_TOKEN;
-		}
-
+	
 		public static function getInstance() {
 			if(!self::$instance)
 				self::$instance = new self;
 			return self::$instance;
 		}
-		
+	
+		public function execute(Token $token, $instructionName, InstructionProcessor $processor, TokenVM $vm) {
+			return TokenVM::DELETE_TOKEN;
+		}
+	
 		public function register(Token $token, $instructionName, InstructionProcessor $processor, TokenVM $vm) {
 			IfInstruction::setEndToken($token);
 		}

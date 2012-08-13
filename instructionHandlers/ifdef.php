@@ -40,10 +40,10 @@
 						throw new InstructionProcessorException('Invalid end token for ' . $instructionName . ' - Probably you forgot an endif?', $token);
 					
 					if(ConstantContainer::isDefined($args[0]))
-						return;
+						return TokenVM::DELETE_TOKEN;
 					
 					$vm->jump($instruction->getEndToken());
-					return TokenVM::JUMP;
+					return TokenVM::JUMP | TokenVM::DELETE_TOKEN;
 				}
 			}
 		}

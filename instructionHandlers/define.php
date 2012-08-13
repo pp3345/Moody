@@ -32,6 +32,8 @@
 		public function execute(Token $token, $instructionName, InstructionProcessor $processor, TokenVM $vm) {
 			$args = $processor->parseArguments($token, $instructionName, 'sx');
 			ConstantContainer::define($args[0], $args[1]);
+			
+			return TokenVM::DELETE_TOKEN;
 		}
 	}
 ?>

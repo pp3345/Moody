@@ -75,5 +75,8 @@
 	require_once 'instructionHandlers/ifdef.php';
 	InstructionHandlers\IfDefHandler::getInstance();
 	
+	require_once 'instructionHandlers/else.php';
+	InstructionHandlers\ElseHandler::getInstance();
+	
 	new CLI;
 ?>
