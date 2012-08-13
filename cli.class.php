@@ -104,5 +104,8 @@
 	require_once 'instructionHandlers/macro.php';
 	InstructionHandlers\MacroHandler::getInstance();
 	
+	require_once 'instructionHandlers/elseif.php';
+	InstructionHandlers\ElseIfHandler::getInstance();
+	
 	new CLI;
 ?>

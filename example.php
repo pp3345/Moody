@@ -55,6 +55,12 @@ echo /* .constant("ABC") */;
 $a = 4;
 $b = "Hello world!";
 // .complexMacro($a, $b)
+
+// .if(true == false)
+ myfunc();
+// .elseif(true == true)
+ myfunc2();
+// .endif
 // .halt
 // .unhandledInstruction
 ?>
