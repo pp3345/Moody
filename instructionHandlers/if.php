@@ -57,10 +57,12 @@
 						$cond .= $arg;
 					}
 					
-					eval('$result = (bool) (' . $cond . ');');
+					$result = eval('return (int) (bool) (' . $cond . ');');
 					
-					if($result === true)
+					if($result === 1)
 						return TokenVM::DELETE_TOKEN;
+					if($result === false)
+						throw new InstructionProcessorException('If-condition ' . $cond . ' is invalid', $token);
 			
 					$vm->jump($instruction->getEndToken());
 					return TokenVM::JUMP | TokenVM::DELETE_TOKEN;

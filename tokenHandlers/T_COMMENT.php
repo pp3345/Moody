@@ -117,7 +117,7 @@
 				if($token->type == T_STRING && ConstantContainer::isDefined($token->content))
 					$tokenValue = ConstantContainer::getConstant($token->content);
 				else if($token->type == T_CONSTANT_ENCAPSED_STRING)
-					eval('$tokenValue = ' . $token->content . ';');
+					$tokenValue = eval('return ' . $token->content . ';');
 				else if($token->type == T_TRUE)
 					$tokenValue = true;
 				else if($token->type == T_FALSE)
