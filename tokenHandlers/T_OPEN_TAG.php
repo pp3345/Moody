@@ -8,7 +8,11 @@
 	
 	namespace Moody\TokenHandlers;
 	
-	class openTagHandler implements \Moody\TokenHandler {
+	use Moody\Token;
+	use Moody\TokenVM;
+	use Moody\TokenHandler;
+
+	class OpenTagHandler implements TokenHandler {
 		private static $instance = null;
 		
 		public static function getInstance() {
@@ -18,14 +22,14 @@
 		}
 		
 		private function __construct() {
-			\Moody\TokenVM::globalRegisterTokenHandler(T_OPEN_TAG, $this);
+			TokenVM::globalRegisterTokenHandler(T_OPEN_TAG, $this);
 		}
 		
-		public function execute(\Moody\Token $token, \Moody\TokenVM $vm) {
+		public function execute(Token $token, TokenVM $vm) {
 			if($token->content == '<?' || $token->content == '<%')
 				$token->content = '<?php';
 			
-			return \Moody\TokenVM::NEXT_HANDLER | \Moody\TokenVM::NEXT_TOKEN;
+			return TokenVM::NEXT_HANDLER | TokenVM::NEXT_TOKEN;
 		}
 	}
 ?>

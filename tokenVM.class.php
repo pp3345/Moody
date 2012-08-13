@@ -65,10 +65,13 @@
 			
 			reset($this->tokenArray);
 			
+			$newArray = array();
+			
 			nextToken:
 			
 			if(!($token = current($this->tokenArray)))
 				goto quit;
+			
 			$tokenID = key($this->tokenArray);
 			next($this->tokenArray);
 			
@@ -97,9 +100,11 @@
 					// All handlers executed, execute retvals
 					goto doRetval;
 				}
-			} else
+			} else {
+				$newArray[] = $token;
 				goto nextToken;
-			
+			}
+				
 			executeHandler:
 			
 			if(!is_object($executor))
@@ -132,20 +137,22 @@
 				goto executeToken; 
 			}
 			
+			if($retval & self::DELETE_TOKEN)
+				unset($this->tokenArray[$token->id]);
+			else
+				$newArray[] = $token;
+			
 			if($retval & self::QUIT)
 				goto quit;
 			
 			if($retval & self::ERROR && !($retval & self::CLEAR_ERROR))
 				throw new VMException('Token handler returned an error', $token, $originalToken);
 			
-			if($retval & self::DELETE_TOKEN)
-				unset($this->tokenArray[$token->id]);
-			
 			if($retval & self::JUMP) {
 				if(!($this->jump instanceof Token))
 					throw new VMException('Cannot jump to new token as it is not a token', $token, $originalToken);
 				
-				if(!in_array($this->$jump, $this->tokenArray))
+				if(!in_array($this->jump, $this->tokenArray))
 					throw new VMException('Cannot jump to new token as it is not specified in current token array', $token, $originalToken);
 				
 				if($this->jump->id < key($this->tokenArray)) {
@@ -164,37 +171,41 @@
 			
 			quit:
 			
-			return $this->tokenArray;
+			return $newArray;
 		}
 		
 		public function hasExecuted($tokenID) {
 			return isset($this->$executedTokens[$tokenID]);
 		}
 		
-		public static function globalRegisterTokenHandler($tokenType, $handler) {
+		public static function globalRegisterTokenHandler($tokenType, TokenHandler $handler) {
 			if(!isset(self::$sHandlerStack[$tokenType]))
 				self::$sHandlerStack[$tokenType] = array($handler);
 			else
 				self::$sHandlerStack[$tokenType][] = $handler;
 		}
 		
-		public static function globalUnregisterTokenHandler($tokenType, $handler) {
+		public static function globalUnregisterTokenHandler($tokenType, TokenHandler $handler) {
 			if(!isset(self::$sHandlerStack[$tokenType]) || ($key = array_search(self::$handlerStack[$tokenType])) === false)
 				return;
 			unset(self::$sHandlerStack[$tokenType][$key]);
 		}
 		
-		public function registerTokenHandler($tokenType, $handler) {
+		public function registerTokenHandler($tokenType, TokenHandler $handler) {
 			if(!isset($this->handlerStack[$tokenType]))
 				$this->handlerStack[$tokenType] = array($handler);
 			else
 				$this->handlerStack[$tokenType][] = $handler;
 		}
 		
-		public function unregisterTokenHandler($tokenType, $handler) {
+		public function unregisterTokenHandler($tokenType, TokenHandler $handler) {
 			if(!isset($this->handlerStack[$tokenType]) || ($key = array_search($this->handlerStack[$tokenType])) === false)
 				return;
 			unset($this->handlerStack[$tokenType][$key]);
+		}
+		
+		public function jump(Token $token) {
+			$this->jump = $token;
 		}
 	}
 ?>

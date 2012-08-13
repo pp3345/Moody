@@ -8,7 +8,12 @@
 	
 	namespace Moody\TokenHandlers;
 	
-	class whitespaceHandler implements \Moody\TokenHandler {
+	use Moody\TokenHandler;
+	use Moody\TokenVM;
+	use Moody\Configuration;
+	use Moody\Token;
+
+	class WhitespaceHandler implements TokenHandler {
 		private static $instance = null;
 	
 		public static function getInstance() {
@@ -18,13 +23,14 @@
 		}
 	
 		private function __construct() {
-			\Moody\TokenVM::globalRegisterTokenHandler(T_WHITESPACE, $this);
+			TokenVM::globalRegisterTokenHandler(T_WHITESPACE, $this);
 		}
 	
-		public function execute(\Moody\Token $token, \Moody\TokenVM $vm) {
-			$token->content = "";
+		public function execute(Token $token, TokenVM $vm) {
+			if(Configuration::get('deletewhitespaces', false))
+				return TokenVM::NEXT_HANDLER | TokenVM::NEXT_TOKEN | TokenVM::DELETE_TOKEN;
 				
-			return \Moody\TokenVM::NEXT_HANDLER | \Moody\TokenVM::NEXT_TOKEN;
+			return TokenVM::NEXT_HANDLER | TokenVM::NEXT_TOKEN;
 		}
 	}
 ?>
