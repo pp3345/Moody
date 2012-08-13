@@ -23,6 +23,10 @@ echo /* .constant("ABC") */;
 // .ifdef("ABC")
  echo 'Trolol';
 // .endif
+// .ifndef("ABC")
+ // .def("ABC", 'Pancake')
+ echo /* .constant('ABC') */;
+// .endif
 // .halt
 // .unhandledInstruction
 ?>

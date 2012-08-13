@@ -86,5 +86,8 @@
 	require_once 'instructionHandlers/undefine.php';
 	InstructionHandlers\UndefineHandler::getInstance();
 	
+	require_once 'instructionHandlers/ifndef.php';
+	InstructionHandlers\IfNotDefHandler::getInstance();
+	
 	new CLI;
 ?>
