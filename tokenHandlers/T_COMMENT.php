@@ -87,10 +87,10 @@
 			$args = array();
 			
 			foreach($tokens as $token) {
-				if($token->type == T_OPEN_TAG 
-				|| $token->type == T_CLOSE_TAG 
-				|| $token->type == T_ROUND_BRACKET_OPEN 
-				|| $token->type == T_ROUND_BRACKET_CLOSE 
+				if($token->type == T_OPEN_TAG
+				|| $token->type == T_CLOSE_TAG
+				|| $token->type == T_ROUND_BRACKET_OPEN
+				|| $token->type == T_ROUND_BRACKET_CLOSE
 				|| $token->type == T_COMMA
 				|| $token->type == T_WHITESPACE)
 					continue;
@@ -98,13 +98,21 @@
 				$tokenValue = $token->content;
 				if($token->type == T_STRING && ConstantContainer::isDefined($token->content))
 					$tokenValue = ConstantContainer::getConstant($token->content);
-				else if($token->type == T_CONSTANT_ENCAPSED_STRING || $token->type == T_LNUMBER || $token->type == T_DNUMBER)
+				else if($token->type == T_CONSTANT_ENCAPSED_STRING)
 					eval('$tokenValue = ' . $token->content . ';');
+				else if($token->type == T_TRUE)
+					$tokenValue = true;
+				else if($token->type == T_FALSE)
+					$tokenValue = false;
+				else if($token->type == T_LNUMBER)
+					$tokenValue = (int) $token->content;
+				else if($token->type == T_DNUMBER)
+					$tokenValue = (float) $token->content;
 				
 				parseArg:
 				
 				if(!isset($options[$argNum + $optionsOffset]) || !$options[$argNum + $optionsOffset]) {
-					$args[] = $token->content;
+					$args[] = $tokenValue;
 				} else if($options[$argNum + $optionsOffset] == '?') {
 					$optionsOffset++;
 					goto parseArg;
@@ -113,8 +121,10 @@
 						default:
 							throw new InstructionProcessorException('Illegal option for argument parser given: ' . $options[$argNum + $optionsOffset], $origToken);
 						case 'n':
-							if(is_numeric($tokenValue))
+							if(is_numeric($tokenValue) && is_string($tokenValue))
 								$args[] = (float) $tokenValue;
+							else if(is_int($tokenValue) || is_float($tokenValue))
+								$args[] = $tokenValue;
 							else
 								throw new InstructionProcessorException('Illegal argument ' . ($argNum + 1). ' for ' . $instructionName . ': ' . $token->content . ' given, number expected' , $origToken);
 							break;
@@ -123,6 +133,12 @@
 								$args[] = $tokenValue;
 							else
 								throw new InstructionProcessorException('Illegal argument ' . ($argNum + 1). ' for ' . $instructionName . ': ' . $token->content . ' given, string expected' , $origToken);
+							break;
+						case 'b':
+							if(is_bool($tokenValue))
+								$args[] = $tokenValue;
+							else
+								throw new InstructionProcessorException('Illegal argument ' . ($argNum + 1). ' for ' . $instructionName . ': ' . $token->content . ' given, bool expected' , $origToken);
 							break;
 						case 'x':
 							$args[] = $tokenValue;

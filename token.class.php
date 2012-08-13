@@ -13,6 +13,8 @@
 	define('T_ROUND_BRACKET_OPEN', 16386);
 	define('T_ROUND_BRACKET_CLOSE', 16387);
 	define('T_COMMA', 16388);
+	define('T_TRUE', 16389);
+	define('T_FALSE', 16390);
 	
 	class Token {
 		public $id = 0;
@@ -28,8 +30,10 @@
 				T_COMMA => "T_COMMA",
 				T_COMMENT => "T_COMMENT",
 				T_DOT => "T_DOT",
+				T_FALSE => "T_FALSE",
 				T_ROUND_BRACKET_CLOSE => "T_ROUND_BRACKET_CLOSE",
 				T_ROUND_BRACKET_OPEN => "T_ROUND_BRACKET_OPEN",
+				T_TRUE => "T_TRUE",
 				T_UNKNOWN => "T_UNKNOWN"
 				/* To be continued */);
 		
@@ -54,6 +58,11 @@
 					$tokenObject->type = $token[0];
 					$tokenObject->content = $token[1];
 					$tokenObject->line = $token[2];
+					
+					if(strtolower($tokenObject->content) == 'true')
+						$tokenObject->type = T_TRUE;
+					else if(strtolower($tokenObject->content) == 'false')
+						$tokenObject->type = T_FALSE;
 				} else if($token == '.') {
 					$tokenObject->type = \T_DOT;
 					$tokenObject->content = '.';

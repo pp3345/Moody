@@ -29,8 +29,14 @@ echo /* .constant("ABC") */;
  echo /* .constant('ABC') */;
 // .endif
 // .ifndef("JUMPED_TO_SOMELABEL")
- // .def("JUMPED_TO_SOMELABEL", 1)
+ // .def("JUMPED_TO_SOMELABEL", true)
  // .goto("someLabel")
+// .endif
+// .if(JUMPED_TO_SOMELABEL == 1)
+ echo 'if is working :D';
+ // .if(JUMPED_TO_SOMELABEL !== 1)
+  echo 'if is really working :D';
+ // .endif
 // .endif
 // .halt
 // .unhandledInstruction

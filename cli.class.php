@@ -95,5 +95,8 @@
 	require_once 'instructionHandlers/goto.php';
 	InstructionHandlers\GotoHandler::getInstance();
 	
+	require_once 'instructionHandlers/if.php';
+	InstructionHandlers\IfHandler::getInstance();
+	
 	new CLI;
 ?>
