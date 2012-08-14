@@ -64,6 +64,11 @@ $b = "Hello world!";
 // .if(/* .eval('return mt_rand(0, 100) > 50; // .constant', false) */)
  echo 'mt_rand() returned a value greater than 50!';
  // .endif
+// .config('deletecomments', true)
+// .if(/* .config('deletecomments') */ === true)
+ echo 'deletecomments activated';
+ // This comment will not show up in the code
+// .endif
 // .halt
 // .unhandledInstruction
 ?>

@@ -110,5 +110,8 @@
 	require_once 'instructionHandlers/eval.php';
 	InstructionHandlers\EvalHandler::getInstance();
 	
+	require_once 'instructionHandlers/configuration.php';
+	InstructionHandlers\ConfigurationHandler::getInstance();
+	
 	new CLI;
 ?>

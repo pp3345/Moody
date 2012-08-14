@@ -15,7 +15,13 @@
 			
 		}
 		
+		public static function set($path, $value) {
+			return self::$configuration[$path] = $value;
+		}
+		
 		public static function get($path, $defaultValue = null) {
+			if(isset(self::$configuration[$path]))
+				return self::$configuration[$path];
 			return $defaultValue;
 		}
 	}
