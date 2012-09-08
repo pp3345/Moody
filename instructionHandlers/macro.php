@@ -35,7 +35,7 @@
 				
 				if(!strlen($args[0]))
 					throw new InstructionProcessorException('Macro name cannot be empty', $token);
-				
+
 				$macro = new Macro(strtolower($args[0]), $args[1]);
 				$processor->registerHandler(strtolower($args[0]), $this);
 				unset($args[0], $args[1]);
@@ -59,13 +59,10 @@
 			
 			$args = $processor->parseArguments($token, $instructionName, $options);
 			
-			$token->content = $macro->buildCode($args);
-			
-			return 0;
-		}
-	
-		public function inlineExecute(Token $token, $instructionName, InstructionProcessor $processor) {
-			$this->execute($token, $instructionName, $processor);
+			//$token->content = $macro->buildCode($args);
+			$vm->insertTokenArray($macro->buildCode($args));
+
+			return TokenVM::DELETE_TOKEN;
 		}
 	}
 	
@@ -99,7 +96,10 @@
 				$i++;
 			}
 			
-			return $code;
+			$tokens = Token::tokenize('<?php ' . $code, 'Macro ' . $this->name);
+			unset($tokens[0]);
+			
+			return $tokens;
 		}
 		
 		public static function getMacro($name) {

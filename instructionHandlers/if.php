@@ -63,7 +63,7 @@
 						return TokenVM::DELETE_TOKEN;
 					if($result === false)
 						throw new InstructionProcessorException('If-condition ' . $cond . ' is invalid', $token);
-			
+
 					$vm->jump($instruction->getEndToken());
 					return TokenVM::JUMP | TokenVM::DELETE_TOKEN;
 				}

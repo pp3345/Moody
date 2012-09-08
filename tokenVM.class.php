@@ -72,7 +72,7 @@
 			if(!($token = current($this->tokenArray)))
 				goto quit;
 			
-			$tokenID = key($this->tokenArray);
+			$tokenID = $token->id;
 			next($this->tokenArray);
 			
 			$originalToken = clone $token;
@@ -89,7 +89,7 @@
 			$retval = 0;
 			
 			nextHandler:
-			
+
 			if(isset($this->handlerStack[$token->type])) {
 				if(current($this->handlerStack[$token->type]) !== false) {
 					$executor = current($this->handlerStack[$token->type]);
@@ -104,7 +104,7 @@
 				$newArray[] = $token;
 				goto nextToken;
 			}
-				
+
 			executeHandler:
 			
 			if(!is_object($executor))
@@ -114,7 +114,7 @@
 				throw new VMException('The execute method of the token handler does not exist or is not callable from the virtual machines\' scope', $token);
 			
 			$newRetval = $executor->execute($token, $this);
-			
+
 			if($newRetval & self::CLEAR_RETVAL)
 				$retval = $newRetval;
 			else
@@ -153,10 +153,10 @@
 				if(!in_array($this->jump, $this->tokenArray))
 					throw new VMException('Cannot jump to new token as it is not specified in current token array', $token, $originalToken);
 				
-				if($this->jump->id < key($this->tokenArray)) {
+				if(array_search($this->jump, $this->tokenArray) < key($this->tokenArray)) {
 					while(current($this->tokenArray) != $this->jump)
 						prev($this->tokenArray);
-				} else if($this->jump->id > key($this->tokenArray)) {
+				} else if(array_search($this->jump, $this->tokenArray) > key($this->tokenArray)) {
 					while(current($this->tokenArray) != $this->jump)
 						next($this->tokenArray);
 				}
@@ -204,6 +204,27 @@
 		
 		public function jump(Token $token) {
 			$this->jump = $token;
+		}
+
+		public function insertTokenArray($tokenArray) {
+			reset($tokenArray);
+			$nextElement = current($tokenArray);
+
+			while($token = current($this->tokenArray)) {
+				$shiftTokens[] = $token;
+				unset($this->tokenArray[key($this->tokenArray)]);
+			}
+
+			foreach($tokenArray as $token)
+				$this->tokenArray[] = $token;
+
+			foreach($shiftTokens as $token)
+				$this->tokenArray[] = $token;
+
+			$key = array_search($nextElement, $this->tokenArray);
+			
+			while(key($this->tokenArray) != $key)
+				prev($this->tokenArray);
 		}
 	}
 ?>
