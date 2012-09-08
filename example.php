@@ -71,6 +71,7 @@ $b = "Hello world!";
 // .endif
 
  // Some very interesting text.Although there is a dot, this should not be parsed as an instruction
+// .inc("example.inc.php")
 // .halt
 // .unhandledInstruction
 ?>

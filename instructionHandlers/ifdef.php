@@ -32,7 +32,7 @@
 	
 		public function execute(Token $token, $instructionName, InstructionProcessor $processor, TokenVM $vm) {
 			$args = $processor->parseArguments($token, $instructionName, 's');
-			
+
 			// Search jump point
 			foreach(IfInstruction::getAll() as $instruction) {
 				if($instruction->getToken() == $token) {

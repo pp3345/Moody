@@ -112,6 +112,9 @@
 	
 	require_once 'instructionHandlers/configuration.php';
 	InstructionHandlers\ConfigurationHandler::getInstance();
+
+	require_once 'instructionHandlers/include.php';
+	InstructionHandlers\IncludeHandler::getInstance();
 	
 	new CLI;
 ?>

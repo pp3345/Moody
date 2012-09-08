@@ -87,7 +87,7 @@
 			$this->executedTokens[$tokenID] = true;
 			
 			$retval = 0;
-			
+
 			nextHandler:
 
 			if(isset($this->handlerStack[$token->type])) {
@@ -215,8 +215,32 @@
 				unset($this->tokenArray[key($this->tokenArray)]);
 			}
 
-			foreach($tokenArray as $token)
+			foreach($tokenArray as $token) {
+				if(isset($this->handlerStack[$token->type])) {
+					// Get current position
+					$key = key($this->handlerStack[$token->type]);
+
+					foreach($this->handlerStack[$token->type] as $executor) {
+						if(!is_object($executor))
+							throw new VMException('Handler for token is not a object', $token);
+						
+						// Protect token from modification by handler
+						$nToken = clone $token;
+						
+						if(is_callable(array($executor, 'register')))
+							$executor->register($token, $this);
+						
+						$token = $nToken;
+					}
+
+					reset($this->handlerStack[$token->type]);
+
+					while(key($this->handlerStack[$token->type]) !== $key)
+						next($this->handlerStack[$token->type]);
+				}
+
 				$this->tokenArray[] = $token;
+			}
 
 			foreach($shiftTokens as $token)
 				$this->tokenArray[] = $token;

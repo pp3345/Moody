@@ -59,7 +59,6 @@
 			
 			$args = $processor->parseArguments($token, $instructionName, $options);
 			
-			//$token->content = $macro->buildCode($args);
 			$vm->insertTokenArray($macro->buildCode($args));
 
 			return TokenVM::DELETE_TOKEN;
@@ -98,7 +97,7 @@
 			
 			$tokens = Token::tokenize('<?php ' . $code, 'Macro ' . $this->name);
 			unset($tokens[0]);
-			
+
 			return $tokens;
 		}
 		
