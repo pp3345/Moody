@@ -39,15 +39,15 @@
 			$matches = array();
 			$vmRetval = 0;
 			
-			if(preg_match('~[.][a-zA-Z]+~', $content, $matches)) {
-				$instruction = strtolower(str_replace('.', '', $matches[0]));
-				
+			if(preg_match('~^\s*(\.([A-Za-z]+))~', $content, $matches)) {
+				$instruction = strtolower($matches[2]);
+
 				if(isset($this->handlerStack[$instruction])) {
 					if(!is_callable(array($this->handlerStack[$instruction], 'execute')))
-						throw new InstructionProcessorException('Handler for instruction "' . $matches[0] . '" does not exist or is not callable', $token);
-					$vmRetval = $this->handlerStack[$instruction]->execute($token, $matches[0], $this, $vm);
+						throw new InstructionProcessorException('Handler for instruction "' . $matches[1] . '" does not exist or is not callable', $token);
+					$vmRetval = $this->handlerStack[$instruction]->execute($token, $matches[1], $this, $vm);
 				} else if(!Configuration::get('ignoreunknowninstruction', false))
-					throw new InstructionProcessorException('Unknown instruction "' . $matches[0] . '"', $token);
+					throw new InstructionProcessorException('Unknown instruction "' . $matches[1] . '"', $token);
 			} else if(Configuration::get('deletecomments', false))
 				$vmRetval = TokenVM::DELETE_TOKEN;
 	
@@ -59,12 +59,12 @@
 				
 			$matches = array();
 			
-			if(preg_match('~[.][a-zA-Z]+~', $content, $matches)) {
-				$instruction = strtolower(str_replace('.', '', $matches[0]));
-				
+			if(preg_match('~^\s*(\.([A-Za-z]+))~', $content, $matches)) {
+				$instruction = strtolower($matches[2]);
+
 				if(isset($this->handlerStack[$instruction])) {
 					if(is_callable(array($this->handlerStack[$instruction], 'register')))
-						$this->handlerStack[$instruction]->register($token, $matches[0], $this, $vm);
+						$this->handlerStack[$instruction]->register($token, $matches[1], $this, $vm);
 				}
 			}
 		}
@@ -74,15 +74,15 @@
 				
 			$matches = array();
 				
-			if(preg_match('~[.][a-zA-Z]+~', $content, $matches)) {
-				$instruction = strtolower(str_replace('.', '', $matches[0]));
+			if(preg_match('~^\s*(\.([A-Za-z]+))~', $content, $matches)) {
+				$instruction = strtolower($matches[2]);
 			
 				if(isset($this->handlerStack[$instruction])) {
 					if(!is_callable(array($this->handlerStack[$instruction], 'inlineExecute')))
-						throw new InstructionProcessorException('Handler for instruction "' . $matches[0] . '" does not have an inline execution handler or is not callable', $token);
-					$this->handlerStack[$instruction]->inlineExecute($token, $matches[0], $this);
+						throw new InstructionProcessorException('Handler for instruction "' . $matches[1] . '" does not support inline execution or is not callable', $token);
+					$this->handlerStack[$instruction]->inlineExecute($token, $matches[1], $this);
 				} else if(!Configuration::get('ignoreunknowninstruction', false))
-					throw new InstructionProcessorException('Unknown instruction "' . $matches[0] . '"', $token);
+					throw new InstructionProcessorException('Unknown instruction "' . $matches[1] . '"', $token);
 			}
 		}
 		

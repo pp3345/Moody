@@ -95,7 +95,7 @@
 			$string = 'Type: ' . (isset(self::$typeNames[$this->type]) ? self::$typeNames[$this->type] : $this->type) . "\r\n";
 			$string .= 'Content: ' . $this->content . "\r\n";
 			if($this->fileName != "Unknown") {
-				$string .= 'File: ' . $this->fileName . "\r\n";
+				$string .= 'Origin: ' . $this->fileName . "\r\n";
 				$string .= 'Line: ' . $this->line . "\r\n";
 			}
 			

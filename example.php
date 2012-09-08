@@ -69,6 +69,8 @@ $b = "Hello world!";
  echo 'deletecomments activated';
  // This comment will not show up in the code
 // .endif
+
+ // Some very interesting text.Although there is a dot, this should not be parsed as an instruction
 // .halt
 // .unhandledInstruction
 ?>
