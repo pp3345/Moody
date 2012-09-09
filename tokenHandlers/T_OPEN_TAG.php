@@ -27,7 +27,7 @@
 		
 		public function execute(Token $token, TokenVM $vm) {
 			if($token->content == '<?' || $token->content == '<%')
-				$token->content = '<?php';
+				$token->content = '<?php ';
 			
 			return TokenVM::NEXT_HANDLER | TokenVM::NEXT_TOKEN;
 		}

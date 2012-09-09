@@ -68,7 +68,7 @@
 			$newArray = array();
 			
 			nextToken:
-			
+
 			if(!($token = current($this->tokenArray)))
 				goto quit;
 			
@@ -79,11 +79,14 @@
 			
 			executeToken:
 			
+			//var_dump((string) $token);
+			//fread(STDIN, 1);
+
 			if(!is_int($tokenID))
 				throw new VMException('Token ID ' . $tokenID . ' is not an integer');
 			if(!($token instanceof Token))
 				throw new VMException('Element ' . $tokenID . ' is not a valid token');
-			
+
 			$this->executedTokens[$tokenID] = true;
 			
 			$retval = 0;
@@ -106,7 +109,7 @@
 			}
 
 			executeHandler:
-			
+
 			if(!is_object($executor))
 				throw new VMException('Handler for token is not a object', $token);
 				
@@ -249,6 +252,10 @@
 			
 			while(key($this->tokenArray) != $key)
 				prev($this->tokenArray);
+		}
+
+		public function getTokenArray() {
+			return $this->tokenArray;
 		}
 	}
 ?>
