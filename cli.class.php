@@ -61,6 +61,9 @@
 	
 	require_once 'tokenHandlers/T_WHITESPACE.php';
 	TokenHandlers\WhitespaceHandler::getInstance();
+
+	require_once 'tokenHandlers/T_VARIABLE.php';
+	TokenHandlers\VariableHandler::getInstance();
 	
 	require_once 'tokenHandlers/T_COMMENT.php';
 	TokenHandlers\InstructionProcessor::getInstance();

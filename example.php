@@ -72,6 +72,12 @@ $b = "Hello world!";
 
  // Some very interesting text.Although there is a dot, this should not be parsed as an instruction
 // .inc("example.inc.php")
+
+ // .config("compressvariables", true)
+ $aVeryLongName = 7;
+ $blubb = 8;
+ echo $aVeryLongName;
+ 
 // .halt
 // .unhandledInstruction
 ?>
