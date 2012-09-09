@@ -121,6 +121,9 @@
 
 	require_once 'instructionHandlers/mapvariable.php';
 	InstructionHandlers\MapVariableHandler::getInstance();
+
+	require_once 'instructionHandlers/raiseerror.php';
+	InstructionHandlers\RaiseErrorHandler::getInstance();
 	
 	new CLI;
 ?>

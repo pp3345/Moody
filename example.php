@@ -80,6 +80,8 @@ $b = "Hello world!";
  // .mapVariable('$moody', '$pancake')
  $moody = 7;
  echo func($moody);
+ // raiseError("OH MY GOD WE ARE OUT OF PANCAKES!!")
+ // ^ Add a dot here and see a nice error
 // .halt
 // .unhandledInstruction
 ?>
