@@ -77,7 +77,9 @@ $b = "Hello world!";
  $aVeryLongName = 7;
  $blubb = 8;
  echo $aVeryLongName;
- 
+ // .mapVariable('$moody', '$pancake')
+ $moody = 7;
+ echo func($moody);
 // .halt
 // .unhandledInstruction
 ?>

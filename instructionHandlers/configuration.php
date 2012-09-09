@@ -10,7 +10,6 @@
 	
 	use Moody\Configuration;
 	use Moody\InstructionProcessorException;
-	use Moody\IfInstruction;
 	use Moody\InstructionHandler;
 	use Moody\Token;
 	use Moody\TokenHandlers\InstructionProcessor;

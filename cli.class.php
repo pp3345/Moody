@@ -118,6 +118,9 @@
 
 	require_once 'instructionHandlers/include.php';
 	InstructionHandlers\IncludeHandler::getInstance();
+
+	require_once 'instructionHandlers/mapvariable.php';
+	InstructionHandlers\MapVariableHandler::getInstance();
 	
 	new CLI;
 ?>
