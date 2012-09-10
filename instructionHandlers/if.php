@@ -8,6 +8,8 @@
 	
 	namespace Moody\InstructionHandlers;
 	
+	use Moody\END_TOKEN_ELSE;
+
 	use Moody\InstructionProcessorException;
 	use Moody\IfInstruction;
 	use Moody\InstructionHandlerWithRegister;
@@ -59,11 +61,13 @@
 					
 					$result = eval('return (int) (bool) (' . $cond . ');');
 					
-					if($result === 1)
+					if($result === 1)  {
+						$instruction->setEndTokenAction(\Moody\END_TOKEN_NO_EXECUTE);
 						return TokenVM::DELETE_TOKEN;
+					}
 					if($result === false)
 						throw new InstructionProcessorException('If-condition ' . $cond . ' is invalid', $token);
-
+					
 					$vm->jump($instruction->getEndToken());
 					return TokenVM::JUMP | TokenVM::DELETE_TOKEN;
 				}

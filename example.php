@@ -15,6 +15,7 @@
    echo 'Not good.';
   // .else
    echo 'Else is working! :D';
+  // .endif
  // .endif
 // .endif
 // Normal comment

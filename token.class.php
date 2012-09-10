@@ -36,7 +36,7 @@
 				T_AS => "T_AS",
 				T_BAD_CHARACTER => "T_BAD_CHARACTER",
 				T_BOOLEAN_AND => "T_BOOLEAN_AND",
-				T_BOOLEN_OR => "T_BOOLEN_OR",
+				T_BOOLEAN_OR => "T_BOOLEAN_OR",
 				T_BOOL_CAST => "T_BOOL_CAST",
 				T_BREAK => "T_BREAK",
 				T_CASE => "T_CASE",

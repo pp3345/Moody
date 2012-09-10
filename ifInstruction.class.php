@@ -8,11 +8,15 @@
 	
 	namespace Moody;
 	
+	const END_TOKEN_NO_EXECUTE = 1;
+	const END_TOKEN_EXECUTE = 2;
+	
 	class IfInstruction {
 		private static $instructionStack = array();
 		private static $nestedStack = array();
 		private $token;
 		private $endToken;
+		private $endTokenAction = END_TOKEN_EXECUTE;
 		
 		public function __construct(Token $token) {
 			self::$instructionStack[] = $this;
@@ -36,6 +40,14 @@
 		
 		public function getEndToken() {
 			return $this->endToken;
+		}
+		
+		public function setEndTokenAction($action) {
+			$this->endTokenAction = $action;
+		}
+		
+		public function getEndTokenAction() {
+			return $this->endTokenAction;
 		}
 		
 		public static function getAll() {
