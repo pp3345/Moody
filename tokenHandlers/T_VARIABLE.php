@@ -32,7 +32,7 @@
 		}
 
 		public function execute(Token $token, TokenVM $vm) {
-			if(Configuration::get('compressvariables', false)) {
+			if(Configuration::get('compressvariables', false) && $token->content != '$this') {
 				if(!isset($this->variableMappings[$token->content])) {
 					do {
 						$this->mapVariable($token->content, is_int($this->nextLetter) ? '$i' . $this->nextLetter : '$' . $this->nextLetter);
