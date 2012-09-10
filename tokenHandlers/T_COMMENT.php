@@ -127,6 +127,8 @@
 					case T_STRING:
 						if(ConstantContainer::isDefined($token->content))
 							$tokenValue = ConstantContainer::getConstant($token->content);
+						else
+							$tokenValue = $token->content;
 						break;
 					case T_CONSTANT_ENCAPSED_STRING:
 						$tokenValue = eval('return ' . $token->content . ';');
