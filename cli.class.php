@@ -22,6 +22,7 @@
 				goto enter;
 			}
 			
+			ConstantContainer::initialize();
 			$tokenArray = Token::tokenize(file_get_contents($fileName), $fileName);
 			$vm = new TokenVM();
 			try {

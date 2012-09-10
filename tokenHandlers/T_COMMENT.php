@@ -112,7 +112,7 @@
 			
 			$argNum = 0;
 			$optionsOffset = 0;
-			$args = array();
+			$args = $ignoreTokens = array();
 			
 			foreach($tokens as $token) {
 				if($token->type == T_OPEN_TAG
@@ -120,7 +120,8 @@
 				|| $token->type == T_ROUND_BRACKET_OPEN
 				|| $token->type == T_ROUND_BRACKET_CLOSE
 				|| $token->type == T_COMMA
-				|| $token->type == T_WHITESPACE)
+				|| $token->type == T_WHITESPACE
+				|| in_array($token, $ignoreTokens))
 					continue;
 				
 				switch($token->type) {
@@ -147,6 +148,41 @@
 						break;
 					case T_NULL:
 						$tokenValue = null;
+						break;
+					case T_NS_SEPARATOR:
+						$totalString = "";
+						$pos = key($tokens) - 1;
+						prev($tokens);
+						// Resolve previous parts
+						while($prev = prev($tokens)) {
+							if($prev->type != T_STRING)
+								break;
+							unset($args[key($args)]);
+							$totalString = $prev->content . $totalString;
+						}
+						
+						while(key($tokens) != $pos)
+							next($tokens);
+						
+						// Insert current token
+						$totalString .= $token->content;
+						
+						// Resolve next parts
+						while($next = next($tokens)) {
+							if($next->type != T_NS_SEPARATOR && $next->type != T_STRING)
+								break;
+							$totalString .= $next->content;
+							
+							// The doc states
+							// "As foreach relies on the internal array pointer changing it within the loop may lead to unexpected behavior."
+							// This is not true. Therefore I have to use this workaround. Silly PHP.
+							$ignoreTokens[] = $next;
+						}
+						
+						if(ConstantContainer::isDefined($totalString))
+							$tokenValue = ConstantContainer::getConstant($totalString);
+						else
+							$tokenValue = $totalString;
 						break;
 					case T_COMMENT:
 						$this->inlineExecute($token);
