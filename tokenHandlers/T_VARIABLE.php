@@ -68,12 +68,13 @@
 									$static = true;
 									goto map;
 								default:
-									if(!isset($static))
+									if(!isset($static) && isset($prop))
 										goto end;
 									goto map;
 								case T_PUBLIC:
 								case T_PROTECTED:
 								case T_PRIVATE:
+									$prop = true;
 								case T_WHITESPACE:
 								case T_FORCED_WHITESPACE:
 									continue 2;
