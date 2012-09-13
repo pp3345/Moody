@@ -126,5 +126,8 @@
 	require_once 'instructionHandlers/raiseerror.php';
 	InstructionHandlers\RaiseErrorHandler::getInstance();
 	
+	require_once 'instructionHandlers/echo.php';
+	InstructionHandlers\EchoHandler::getInstance();
+	
 	new CLI;
 ?>
