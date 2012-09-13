@@ -47,6 +47,8 @@
 			TokenVM::globalRegisterTokenHandler(T_START_HEREDOC, $this);
 			TokenVM::globalRegisterTokenHandler(T_SEMICOLON, $this);
 			TokenVM::globalRegisterTokenHandler(T_END_HEREDOC, $this);
+			TokenVM::globalRegisterTokenHandler(T_BREAK, $this);
+			TokenVM::globalRegisterTokenHandler(T_CONTINUE, $this);
 		}
 	
 		public function execute(Token $token, TokenVM $vm) {
@@ -66,6 +68,8 @@
 					case T_STATIC:
 					case T_FINAL:
 					case T_CASE:
+					case T_CONTINUE:
+					case T_BREAK:
 						$tokenArray = $vm->getTokenArray();
 
 						if($tokenX = current($tokenArray)) {
