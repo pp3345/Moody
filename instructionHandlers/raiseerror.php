@@ -6,7 +6,7 @@
 	/* 2012 Yussuf Khalil                                           */
 	/****************************************************************/
 	
-	namespace Moody\InstructionHandlers;
+	namespace Moody\InstructionHandlers {
 	
 	use Moody\InstructionProcessorException;
 	use Moody\InstructionHandler;
@@ -37,5 +37,7 @@
 		public function inlineExecute(Token $token, $instructionName, InstructionProcessor $processor) {
 			$this->execute($token, $instructionName, $processor);
 		}
+	}
+	
 	}
 ?>

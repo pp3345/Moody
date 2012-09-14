@@ -6,7 +6,7 @@
 	/* 2012 Yussuf Khalil                                           */
 	/****************************************************************/
 	
-	namespace Moody\InstructionHandlers;
+	namespace Moody\InstructionHandlers {
 	
 	use Moody\TokenHandlers\InstructionProcessor;
 	use Moody\InstructionHandlerWithRegister;
@@ -34,5 +34,7 @@
 		public function register(Token $token, $instructionName, InstructionProcessor $processor, TokenVM $vm) {
 			IfInstruction::setEndToken($token);
 		}
+	}
+	
 	}
 ?>

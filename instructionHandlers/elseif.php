@@ -6,10 +6,9 @@
 	/* 2012 Yussuf Khalil                                           */
 	/****************************************************************/
 	
-	namespace Moody\InstructionHandlers;
+	namespace Moody\InstructionHandlers {
 	
 	use Moody\END_TOKEN_NO_EXECUTE;
-
 	use Moody\InstructionProcessorException;
 	use Moody\IfInstruction;
 	use Moody\InstructionHandlerWithRegister;
@@ -60,5 +59,7 @@
 			IfInstruction::setEndToken($token);
 			new IfInstruction($token);
 		}
+	}
+	
 	}
 ?>

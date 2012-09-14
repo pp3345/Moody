@@ -6,7 +6,7 @@
 	/* 2012 Yussuf Khalil                                           */
 	/****************************************************************/
 	
-	namespace Moody;
+	namespace Moody {
 	
 	class InstructionProcessorException extends \Exception {
 		private $token;
@@ -26,5 +26,7 @@
 			
 			return $string;
 		}
+	}
+	
 	}
 ?>

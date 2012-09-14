@@ -6,7 +6,7 @@
 	/* 2012 Yussuf Khalil                                           */
 	/****************************************************************/
 	
-	namespace Moody;
+	namespace Moody {
 	
 	class Configuration {
 		private static $configuration = array();
@@ -24,5 +24,7 @@
 				return self::$configuration[$path];
 			return $defaultValue;
 		}
+	}
+	
 	}
 ?>

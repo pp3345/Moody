@@ -6,7 +6,7 @@
 	/* 2012 Yussuf Khalil                                           */
 	/****************************************************************/
 	
-	namespace Moody\InstructionHandlers;
+	namespace Moody\InstructionHandlers {
 	
 	use Moody\InstructionProcessorException;
 	use Moody\IfInstruction;
@@ -88,13 +88,13 @@
 		public function buildCode($args = array()) {
 			$i = 0;
 			$code = $this->code;
-			
+
 			foreach($this->arguments as $arg) {
 				$code = str_replace($arg, $args[$i], $code);
 				
 				$i++;
 			}
-			
+
 			$tokens = Token::tokenize('<?php ' . $code, 'Macro ' . $this->name);
 			unset($tokens[0]);
 
@@ -105,5 +105,7 @@
 			if(isset(self::$macros[$name]))
 				return self::$macros[$name];
 		}
+	}
+	
 	}
 ?>

@@ -6,7 +6,7 @@
 	/* 2012 Yussuf Khalil                                           */
 	/****************************************************************/
 	
-	namespace Moody;
+	namespace Moody {
 	
 	const END_TOKEN_NO_EXECUTE = 1;
 	const END_TOKEN_EXECUTE = 2;
@@ -53,5 +53,7 @@
 		public static function getAll() {
 			return self::$instructionStack;
 		}
+	}
+	
 	}
 ?>

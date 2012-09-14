@@ -6,7 +6,7 @@
 	/* 2012 Yussuf Khalil                                           */
 	/****************************************************************/
 	
-	namespace Moody\TokenHandlers;
+	namespace Moody\TokenHandlers {
 	
 	use Moody\Token;
 	use Moody\TokenVM;
@@ -31,5 +31,7 @@
 			
 			return TokenVM::NEXT_HANDLER | TokenVM::NEXT_TOKEN;
 		}
+	}
+	
 	}
 ?>

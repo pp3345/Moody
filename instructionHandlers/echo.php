@@ -6,7 +6,7 @@
 	/* 2012 Yussuf Khalil                                           */
 	/****************************************************************/
 	
-	namespace Moody\InstructionHandlers;
+	namespace Moody\InstructionHandlers {
 	
 	use Moody\InstructionHandler;
 	use Moody\Token;
@@ -33,5 +33,7 @@
 			
 			return TokenVM::DELETE_TOKEN;
 		}
+	}
+	
 	}
 ?>

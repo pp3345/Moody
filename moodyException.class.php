@@ -6,7 +6,7 @@
 	/* 2012 Yussuf Khalil                                           */
 	/****************************************************************/
 
-	namespace Moody;
+	namespace Moody {
 	
 	class MoodyException extends \Exception {
 		public function __toString() {
@@ -16,5 +16,7 @@
 			
 			return $string;
 		}
+	}
+	
 	}
 ?>

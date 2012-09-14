@@ -6,7 +6,7 @@
 	/* 2012 Yussuf Khalil                                           */
 	/****************************************************************/
 	
-	namespace Moody\TokenHandlers;
+	namespace Moody\TokenHandlers {
 	
 	use Moody\TokenHandler;
 	use Moody\TokenVM;
@@ -49,6 +49,10 @@
 			TokenVM::globalRegisterTokenHandler(T_END_HEREDOC, $this);
 			TokenVM::globalRegisterTokenHandler(T_BREAK, $this);
 			TokenVM::globalRegisterTokenHandler(T_CONTINUE, $this);
+			TokenVM::globalRegisterTokenHandler(T_USE, $this);
+			TokenVM::globalRegisterTokenHandler(T_THROW, $this);
+			TokenVM::globalRegisterTokenHandler(T_INTERFACE, $this);
+			TokenVM::globalRegisterTokenHandler(T_TRAIT, $this);
 		}
 	
 		public function execute(Token $token, TokenVM $vm) {
@@ -57,7 +61,7 @@
 					case T_WHITESPACE:
 						$tokenArray = $vm->getTokenArray();
 						
-						if($tokenX = current($tokenArray) && $tokenX->type == T_END_HEREDOC)
+						if(($tokenX = current($tokenArray)) && $tokenX->type == T_END_HEREDOC)
 							$this->insertForcedWhitespace($vm, true);
 						return TokenVM::NEXT_HANDLER | TokenVM::NEXT_TOKEN | TokenVM::DELETE_TOKEN;
 					case T_ECHO:
@@ -70,6 +74,7 @@
 					case T_CASE:
 					case T_CONTINUE:
 					case T_BREAK:
+					case T_THROW:
 						$tokenArray = $vm->getTokenArray();
 
 						if($tokenX = current($tokenArray)) {
@@ -99,6 +104,9 @@
 					case T_EXTENDS:
 					case T_FUNCTION:
 					case T_START_HEREDOC:
+					case T_USE:
+					case T_INTERFACE:
+					case T_TRAIT:
 						$this->insertForcedWhitespace($vm);
 						break;
 					case T_ELSE:
@@ -117,7 +125,7 @@
 						if($tokenX = current($tokenArray)) {
 							if($tokenX->type != T_WHITESPACE)
 								return TokenVM::NEXT_HANDLER | TokenVM::NEXT_TOKEN;
-							else if(($tokenX = next($tokenArray)) && ($tokenX->type == T_EXTENDS || $tokenX->type == T_INSTEADOF))
+							else if(($tokenX = next($tokenArray)) && ($tokenX->type == T_EXTENDS || $tokenX->type == T_INSTEADOF || $tokenX->type == T_INSTANCEOF || $tokenX->type == T_AS))
 								$this->insertForcedWhitespace($vm);
 						}
 						break;
@@ -133,12 +141,14 @@
 					case T_END_HEREDOC:
 						$tokenArray = $vm->getTokenArray();
 						
-						if($tokenX = current($tokenArray) && $tokenX->type != T_SEMICOLON)
+						if(($tokenX = current($tokenArray)) && $tokenX->type != T_SEMICOLON)
 							$this->insertForcedWhitespace($vm, true);
 						break;
 				}
 			}
 
+			end:
+			
 			return TokenVM::NEXT_HANDLER | TokenVM::NEXT_TOKEN;
 		}
 
@@ -149,5 +159,7 @@
 			$token->fileName = "Moody WhitespaceHandler";
 			$vm->insertTokenArray(array($token));
 		}
+	}
+	
 	}
 ?>

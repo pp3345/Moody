@@ -6,10 +6,9 @@
 	/* 2012 Yussuf Khalil                                           */
 	/****************************************************************/
 	
-	namespace Moody\InstructionHandlers;
+	namespace Moody\InstructionHandlers {
 	
 	use Moody\END_TOKEN_ELSE;
-
 	use Moody\InstructionProcessorException;
 	use Moody\IfInstruction;
 	use Moody\InstructionHandlerWithRegister;
@@ -77,5 +76,7 @@
 		public function register(Token $token, $instructionName, InstructionProcessor $processor, TokenVM $vm) {
 			new IfInstruction($token);
 		}
+	}
+	
 	}
 ?>

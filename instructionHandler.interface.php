@@ -6,7 +6,7 @@
 	/* 2012 Yussuf Khalil                                           */
 	/****************************************************************/
 	
-	namespace Moody;
+	namespace Moody {
 	
 	interface InstructionHandler {
 		public static function getInstance();
@@ -15,5 +15,7 @@
 	
 	interface InstructionHandlerWithRegister extends InstructionHandler {
 		public function register(Token $token, $instructionName, TokenHandlers\InstructionProcessor $processor, TokenVM $vm);
+	}
+	
 	}
 ?>

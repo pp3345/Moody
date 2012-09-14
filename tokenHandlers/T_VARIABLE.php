@@ -6,7 +6,7 @@
 	/* 2012 Yussuf Khalil                                           */
 	/****************************************************************/
 	
-	namespace Moody\TokenHandlers;
+	namespace Moody\TokenHandlers {
 	
 	use Moody\TokenHandler;
 	use Moody\TokenVM;
@@ -109,5 +109,7 @@
 		public function mapVariable($originalVariable, $newName) {
 			return $this->variableMappings[$originalVariable] = $newName;
 		}
+	}
+	
 	}
 ?>

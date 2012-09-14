@@ -6,7 +6,7 @@
 	/* 2012 Yussuf Khalil                                           */
 	/****************************************************************/
 	
-	namespace Moody\TokenHandlers;
+	namespace Moody\TokenHandlers {
 	
 	use Moody\TokenHandlerWithRegister;
 	use Moody\TokenVM;
@@ -235,5 +235,7 @@
 			
 			return $args;
 		}
+	}
+	
 	}
 ?>

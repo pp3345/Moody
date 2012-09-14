@@ -6,7 +6,7 @@
 	/* 2012 Yussuf Khalil                                           */
 	/****************************************************************/
 	
-	namespace Moody\InstructionHandlers;
+	namespace Moody\InstructionHandlers {
 	
 	use Moody\InstructionProcessorException;
 	use Moody\IfInstruction;
@@ -48,5 +48,7 @@
 			if(isset(self::$labels[$name]))
 				return self::$labels[$name];
 		}
+	}
+	
 	}
 ?>

@@ -6,7 +6,7 @@
 	/* 2012 Yussuf Khalil                                           */
 	/****************************************************************/
 	
-	namespace Moody;
+	namespace Moody {
 
 	/**
 	 * Exceptions thrown by the Moody Virtual Machine
@@ -40,5 +40,7 @@
 			
 			return $string;
 		}
+	}
+	
 	}
 ?>

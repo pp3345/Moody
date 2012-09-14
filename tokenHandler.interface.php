@@ -6,7 +6,7 @@
 	/* 2012 Yussuf Khalil                                           */
 	/****************************************************************/
 	
-	namespace Moody;
+	namespace Moody {
 	
 	interface TokenHandler {
 		public static function getInstance();
@@ -15,5 +15,7 @@
 	
 	interface TokenHandlerWithRegister extends TokenHandler {
 		public function register(Token $token, TokenVM $vm);
+	}
+	
 	}
 ?>

@@ -6,7 +6,7 @@
 	/* 2012 Yussuf Khalil                                           */
 	/****************************************************************/
 	
-	namespace Moody;
+	namespace Moody {
 	
 	define('T_DOT', 16384);
 	define('T_UNKNOWN', 16385);
@@ -18,6 +18,10 @@
 	define('T_NULL', 16391);
 	define('T_FORCED_WHITESPACE', 16392);
 	define('T_SEMICOLON', 16393);
+	if(!defined('T_INSTEADOF'))
+		define('T_INSTEADOF', 32768);
+	if(!defined('T_TRAIT'))
+		define('T_TRAIT', 32769);
 	
 	class Token {
 		public $id = 0;
@@ -188,5 +192,7 @@
 			if($value === null)
 				return "null";
 		}
+	}
+	
 	}
 ?>

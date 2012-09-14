@@ -6,7 +6,7 @@
 	/* 2012 Yussuf Khalil                                           */
 	/****************************************************************/
 
-	namespace Moody;
+	namespace Moody {
 
 	class ConstantContainer {
 		private static $constants = array();
@@ -36,5 +36,7 @@
 			if(isset(self::$constants[$name]))
 				unset(self::$constants[$name]);
 		}
+	}
+	
 	}
 ?>

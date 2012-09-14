@@ -6,7 +6,7 @@
     /* 2012 Yussuf Khalil                                           */
     /****************************************************************/
 
-	namespace Moody;
+	namespace Moody {
 	
 	/**
 	 * Virtual Machine that executes the token handlers
@@ -257,5 +257,7 @@
 		public function getTokenArray() {
 			return $this->tokenArray;
 		}
+	}
+	
 	}
 ?>

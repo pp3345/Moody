@@ -6,7 +6,7 @@
 	/* 2012 Yussuf Khalil                                           */
 	/****************************************************************/
 	
-	namespace Moody\InstructionHandlers;
+	namespace Moody\InstructionHandlers {
 	
 	use Moody\InstructionProcessorException;
 	use Moody\IfInstruction;
@@ -40,5 +40,7 @@
 				
 			return TokenVM::DELETE_TOKEN;
 		}
+	}
+	
 	}
 ?>

@@ -6,7 +6,7 @@
 	/* 2012 Yussuf Khalil                                           */
 	/****************************************************************/
 	
-	namespace Moody\InstructionHandlers;
+	namespace Moody\InstructionHandlers {
 	
 	use Moody\InstructionHandler;
 	use Moody\Token;
@@ -31,5 +31,7 @@
 		public function execute(Token $token, $instructionName, InstructionProcessor $processor, TokenVM $vm) {
 			return TokenVM::QUIT | TokenVM::DELETE_TOKEN;
 		}
+	}
+	
 	}
 ?>
