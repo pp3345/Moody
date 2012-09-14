@@ -39,7 +39,7 @@
 			$matches = array();
 			$vmRetval = 0;
 			
-			if(preg_match('~^\s*(\.([A-Za-z]+))~', $content, $matches)) {
+			if(preg_match('~^\s*(\.([A-Za-z_]+))~', $content, $matches)) {
 				$instruction = strtolower($matches[2]);
 
 				if(isset($this->handlerStack[$instruction])) {
@@ -59,7 +59,7 @@
 				
 			$matches = array();
 			
-			if(preg_match('~^\s*(\.([A-Za-z]+))~', $content, $matches)) {
+			if(preg_match('~^\s*(\.([A-Za-z_]+))~', $content, $matches)) {
 				$instruction = strtolower($matches[2]);
 
 				if(isset($this->handlerStack[$instruction])) {
@@ -74,7 +74,7 @@
 				
 			$matches = array();
 				
-			if(preg_match('~^\s*(\.([A-Za-z]+))~', $content, $matches)) {
+			if(preg_match('~^\s*(\.([A-Za-z_]+))~', $content, $matches)) {
 				$instruction = strtolower($matches[2]);
 			
 				if(isset($this->handlerStack[$instruction])) {
