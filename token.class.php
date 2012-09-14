@@ -23,6 +23,8 @@
 	if(!defined('T_TRAIT'))
 		define('T_TRAIT', 32769);
 	
+	#.mapVariable '$content' '$content'
+	
 	class Token {
 		public $id = 0;
 		public $type = 0;

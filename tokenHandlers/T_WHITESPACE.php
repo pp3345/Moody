@@ -53,6 +53,7 @@
 			TokenVM::globalRegisterTokenHandler(T_THROW, $this);
 			TokenVM::globalRegisterTokenHandler(T_INTERFACE, $this);
 			TokenVM::globalRegisterTokenHandler(T_TRAIT, $this);
+			TokenVM::globalRegisterTokenHandler(T_IMPLEMENTS, $this);
 		}
 	
 		public function execute(Token $token, TokenVM $vm) {
@@ -107,6 +108,7 @@
 					case T_USE:
 					case T_INTERFACE:
 					case T_TRAIT:
+					case T_IMPLEMENTS:
 						$this->insertForcedWhitespace($vm);
 						break;
 					case T_ELSE:
@@ -125,7 +127,7 @@
 						if($tokenX = current($tokenArray)) {
 							if($tokenX->type != T_WHITESPACE)
 								return TokenVM::NEXT_HANDLER | TokenVM::NEXT_TOKEN;
-							else if(($tokenX = next($tokenArray)) && ($tokenX->type == T_EXTENDS || $tokenX->type == T_INSTEADOF || $tokenX->type == T_INSTANCEOF || $tokenX->type == T_AS))
+							else if(($tokenX = next($tokenArray)) && ($tokenX->type == T_EXTENDS || $tokenX->type == T_INSTEADOF || $tokenX->type == T_INSTANCEOF || $tokenX->type == T_AS || $tokenX->type == T_IMPLEMENTS))
 								$this->insertForcedWhitespace($vm);
 						}
 						break;
