@@ -33,7 +33,7 @@
 		}
 
 		public function execute(Token $token, TokenVM $vm) {
-			static $forbiddenVariables = array('$this', '$_GET', '$_POST', '$_REQUEST', '$_COOKIE', '$_ENV', '$_SESSION');
+			static $forbiddenVariables = array('$this', '$_GET', '$_POST', '$_REQUEST', '$_COOKIE', '$_ENV', '$_SESSION', '$_SERVER', '$_FILES');
 			
 			if(Configuration::get('compressvariables', false) && !in_array($token->content, $forbiddenVariables)) {
 				if($token->type == T_OBJECT_OPERATOR) {
