@@ -23,37 +23,39 @@
 		}
 	
 		private function __construct() {
-			TokenVM::globalRegisterTokenHandler(T_WHITESPACE, $this);
-			TokenVM::globalRegisterTokenHandler(T_ECHO, $this);
-			TokenVM::globalRegisterTokenHandler(T_VARIABLE, $this);
-			TokenVM::globalRegisterTokenHandler(T_GOTO, $this);
-			TokenVM::globalRegisterTokenHandler(T_ELSE, $this);
-			TokenVM::globalRegisterTokenHandler(T_NAMESPACE, $this);
-			TokenVM::globalRegisterTokenHandler(T_CONST, $this);
-			TokenVM::globalRegisterTokenHandler(T_NEW, $this);
-			TokenVM::globalRegisterTokenHandler(T_INSTANCEOF, $this);
-			TokenVM::globalRegisterTokenHandler(T_INSTEADOF, $this);
-			TokenVM::globalRegisterTokenHandler(T_STRING, $this);
-			TokenVM::globalRegisterTokenHandler(T_CLASS, $this);
-			TokenVM::globalRegisterTokenHandler(T_EXTENDS, $this);
-			TokenVM::globalRegisterTokenHandler(T_PUBLIC, $this);
-			TokenVM::globalRegisterTokenHandler(T_PROTECTED, $this);
-			TokenVM::globalRegisterTokenHandler(T_PRIVATE, $this);
-			TokenVM::globalRegisterTokenHandler(T_FINAL, $this);
-			TokenVM::globalRegisterTokenHandler(T_STATIC, $this);
-			TokenVM::globalRegisterTokenHandler(T_FUNCTION, $this);
-			TokenVM::globalRegisterTokenHandler(T_RETURN, $this);
-			TokenVM::globalRegisterTokenHandler(T_CASE, $this);
-			TokenVM::globalRegisterTokenHandler(T_START_HEREDOC, $this);
-			TokenVM::globalRegisterTokenHandler(T_SEMICOLON, $this);
-			TokenVM::globalRegisterTokenHandler(T_END_HEREDOC, $this);
-			TokenVM::globalRegisterTokenHandler(T_BREAK, $this);
-			TokenVM::globalRegisterTokenHandler(T_CONTINUE, $this);
-			TokenVM::globalRegisterTokenHandler(T_USE, $this);
-			TokenVM::globalRegisterTokenHandler(T_THROW, $this);
-			TokenVM::globalRegisterTokenHandler(T_INTERFACE, $this);
-			TokenVM::globalRegisterTokenHandler(T_TRAIT, $this);
-			TokenVM::globalRegisterTokenHandler(T_IMPLEMENTS, $this);
+			if(Configuration::get('supportwhitespacedeletion', true)) {
+				TokenVM::globalRegisterTokenHandler(T_WHITESPACE, $this);
+				TokenVM::globalRegisterTokenHandler(T_ECHO, $this);
+				TokenVM::globalRegisterTokenHandler(T_VARIABLE, $this);
+				TokenVM::globalRegisterTokenHandler(T_GOTO, $this);
+				TokenVM::globalRegisterTokenHandler(T_ELSE, $this);
+				TokenVM::globalRegisterTokenHandler(T_NAMESPACE, $this);
+				TokenVM::globalRegisterTokenHandler(T_CONST, $this);
+				TokenVM::globalRegisterTokenHandler(T_NEW, $this);
+				TokenVM::globalRegisterTokenHandler(T_INSTANCEOF, $this);
+				TokenVM::globalRegisterTokenHandler(T_INSTEADOF, $this);
+				TokenVM::globalRegisterTokenHandler(T_STRING, $this);
+				TokenVM::globalRegisterTokenHandler(T_CLASS, $this);
+				TokenVM::globalRegisterTokenHandler(T_EXTENDS, $this);
+				TokenVM::globalRegisterTokenHandler(T_PUBLIC, $this);
+				TokenVM::globalRegisterTokenHandler(T_PROTECTED, $this);
+				TokenVM::globalRegisterTokenHandler(T_PRIVATE, $this);
+				TokenVM::globalRegisterTokenHandler(T_FINAL, $this);
+				TokenVM::globalRegisterTokenHandler(T_STATIC, $this);
+				TokenVM::globalRegisterTokenHandler(T_FUNCTION, $this);
+				TokenVM::globalRegisterTokenHandler(T_RETURN, $this);
+				TokenVM::globalRegisterTokenHandler(T_CASE, $this);
+				TokenVM::globalRegisterTokenHandler(T_START_HEREDOC, $this);
+				TokenVM::globalRegisterTokenHandler(T_SEMICOLON, $this);
+				TokenVM::globalRegisterTokenHandler(T_END_HEREDOC, $this);
+				TokenVM::globalRegisterTokenHandler(T_BREAK, $this);
+				TokenVM::globalRegisterTokenHandler(T_CONTINUE, $this);
+				TokenVM::globalRegisterTokenHandler(T_USE, $this);
+				TokenVM::globalRegisterTokenHandler(T_THROW, $this);
+				TokenVM::globalRegisterTokenHandler(T_INTERFACE, $this);
+				TokenVM::globalRegisterTokenHandler(T_TRAIT, $this);
+				TokenVM::globalRegisterTokenHandler(T_IMPLEMENTS, $this);
+			}
 		}
 	
 		public function execute(Token $token, TokenVM $vm) {
