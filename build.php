@@ -23,6 +23,8 @@
 	
 	$source = '<?php ';
 	
+	$source .= '/* .mapVariable \'$message\' \'$message\' */';
+	$source .= '/* .mapVariable \'$code\' \'$code\' */';
 	$source .= '/* .include "configuration.class.php" */';
 	$source .= '/* .include "constantContainer.class.php" */';
 	$source .= '/* .include "ifInstruction.class.php" */';
