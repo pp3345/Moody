@@ -108,7 +108,7 @@
 			$instructionArgs = substr($content, strpos($content, $instructionName) + strlen($instructionName));
 
 			// Tokenize
-			$tokens = Token::tokenize('<?php ' . $instructionArgs . ' ?>');
+			$tokens = Token::tokenize('<?php ' . $instructionArgs . ' ?>', 'Moody Argument Parser');
 			
 			$argNum = 0;
 			$optionsOffset = 0;
@@ -157,6 +157,7 @@
 						while($prev = prev($tokens)) {
 							if($prev->type != T_STRING)
 								break;
+							end($args);
 							unset($args[key($args)]);
 							$totalString = $prev->content . $totalString;
 						}
@@ -178,7 +179,7 @@
 							// This is not true. Therefore I have to use this workaround. Silly PHP.
 							$ignoreTokens[] = $next;
 						}
-						
+
 						if(ConstantContainer::isDefined($totalString))
 							$tokenValue = ConstantContainer::getConstant($totalString);
 						else
