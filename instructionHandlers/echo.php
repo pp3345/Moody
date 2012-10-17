@@ -18,6 +18,7 @@
 		
 		private function __construct() {
 			InstructionProcessor::getInstance()->registerHandler('echo', $this);
+			InstructionProcessor::getInstance()->registerHandler('print', $this);
 		}
 		
 		public static function getInstance() {
@@ -27,9 +28,10 @@
 		}
 
 		public function execute(Token $token, $instructionName, InstructionProcessor $processor, TokenVM $vm) {
-			$args = $processor->parseArguments($token, $instructionName, 's');
+			$args = $processor->parseArguments($token, $instructionName, 'x');
 			
-			echo $args[0];
+			foreach($args as $arg)
+				echo (string) $arg;
 			
 			return TokenVM::DELETE_TOKEN;
 		}
