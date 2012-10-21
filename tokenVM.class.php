@@ -176,7 +176,7 @@
 		}
 		
 		public function hasExecuted($tokenID) {
-			return isset($this->$executedTokens[$tokenID]);
+			return isset($this->executedTokens[$tokenID]);
 		}
 		
 		public static function globalRegisterTokenHandler($tokenType, TokenHandler $handler) {
