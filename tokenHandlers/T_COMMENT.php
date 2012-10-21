@@ -51,7 +51,7 @@
 			} else if(Configuration::get('deletecomments', false))
 				$vmRetval = TokenVM::DELETE_TOKEN;
 	
-			return TokenVM::NEXT_HANDLER | TokenVM::NEXT_TOKEN | $vmRetval;
+			return (TokenVM::NEXT_HANDLER | TokenVM::NEXT_TOKEN) ^ $vmRetval;
 		}
 		
 		public function register(Token $token, TokenVM $vm) {
