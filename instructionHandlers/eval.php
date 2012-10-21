@@ -49,7 +49,7 @@
 					exit;
 				}
 				
-				// Lets hope <?php and ? > are where they are supposed to be
+				// Let's hope <?php and ? > are where they are supposed to be
 				if(isset($addedPHPTokens)) {
 					reset($tokenArray);
 					unset($tokenArray[key($tokenArray)]);
@@ -67,7 +67,6 @@
 			$result = eval($args[0]);
 			
 			if($result !== null) {
-				
 				$token->content = !isset($args[2]) || $args[2] === true ? Token::makeEvaluatable($result) : $result;
 				return 0;
 			}
