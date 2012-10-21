@@ -39,8 +39,10 @@
 					if(!($instruction->getEndToken() instanceof Token))
 						throw new InstructionProcessorException('Invalid end token for ' . $instructionName . ' - Probably you forgot an endif?', $token);
 					
-					if(ConstantContainer::isDefined($args[0]))
+					if(ConstantContainer::isDefined($args[0])) {
+						$instruction->setEndTokenAction(\Moody\END_TOKEN_NO_EXECUTE);
 						return TokenVM::DELETE_TOKEN;
+					}
 					
 					$vm->jump($instruction->getEndToken());
 					return TokenVM::JUMP | TokenVM::DELETE_TOKEN;
