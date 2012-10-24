@@ -36,9 +36,9 @@
 			if(!isset($args[1]) || $args[1] === true) {
 				if(!strpos($args[0], '<?')) {
 					$addedPHPTokens = true;
-					$tokenArray = Token::tokenize('<?php ' . $args[0] . ' ?>');
+					$tokenArray = Token::tokenize('<?php ' . $args[0] . ' ?>', $instructionName . ' code');
 				} else
-					$tokenArray = Token::tokenize($args[0]);
+					$tokenArray = Token::tokenize($args[0],  $instructionName . ' code');
 				
 				$vm = new TokenVM();
 				
