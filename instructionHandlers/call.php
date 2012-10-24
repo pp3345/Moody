@@ -31,7 +31,7 @@
 				$args = $processor->parseArguments($token, $instructionName, 's');
 				
 				if(strpos($args[0], '::')) {
-					$parts = explode($args[0], '::', 2);
+					$parts = explode('::', $args[0], 2);
 					$function = array($parts[0], $parts[1]);
 					if(!method_exists($parts[0], $parts[1]))
 						throw new InstructionProcessorException($args[0] . '() does not exist', $token);
