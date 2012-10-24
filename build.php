@@ -69,10 +69,14 @@
 	
 	ConstantContainer::initialize();
 	
-	Configuration::set('deletewhitespaces', true);
-	Configuration::set('compressvariables', true);
-	Configuration::set('compressproperties', true);
-	Configuration::set('deletecomments', true);
+	$options = getopt('', array('fastbuild'));
+	
+	if(!isset($options['fastbuild'])) {
+		Configuration::set('deletewhitespaces', true);
+		Configuration::set('compressvariables', true);
+		Configuration::set('compressproperties', true);
+		Configuration::set('deletecomments', true);
+	}
 	
 	try {
 		$tokens = Token::tokenize($source, 'Moody Builder');
