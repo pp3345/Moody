@@ -17,5 +17,10 @@
 		public function register(Token $token, $instructionName, TokenHandlers\InstructionProcessor $processor, TokenVM $vm);
 	}
 	
+	interface InlineInstructionHandler extends InstructionHandler {
+		public function inlineExecute(Token $token, $instructionName, TokenHandlers\InstructionProcessor $processor);
+		public function execute(Token $token, $instructionName, TokenHandlers\InstructionProcessor $processor, TokenVM $vm = null, $inline = false);
+	}
+	
 	}
 ?>

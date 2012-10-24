@@ -9,12 +9,12 @@
 	namespace Moody\InstructionHandlers {
 	
 	use Moody\InstructionProcessorException;
-	use Moody\InstructionHandler;
+	use Moody\InlineInstructionHandler;
 	use Moody\Token;
 	use Moody\TokenHandlers\InstructionProcessor;
 	use Moody\TokenVM;
 	
-	class RaiseErrorHandler implements InstructionHandler {
+	class RaiseErrorHandler implements InlineInstructionHandler {
 		private static $instance = null;
 	
 		private function __construct() {
@@ -28,14 +28,14 @@
 			return self::$instance;
 		}
 	
-		public function execute(Token $token, $instructionName, InstructionProcessor $processor, TokenVM $vm = null) {
+		public function execute(Token $token, $instructionName, InstructionProcessor $processor, TokenVM $vm = null, $inline = false) {
 			$args = $processor->parseArguments($token, $instructionName, 's');
 
 			throw new InstructionProcessorException($args[0], $token);
 		}
 
 		public function inlineExecute(Token $token, $instructionName, InstructionProcessor $processor) {
-			$this->execute($token, $instructionName, $processor);
+			return $this->execute($token, $instructionName, $processor, null, true);
 		}
 	}
 	

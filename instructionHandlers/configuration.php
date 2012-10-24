@@ -10,12 +10,12 @@
 	
 	use Moody\Configuration;
 	use Moody\InstructionProcessorException;
-	use Moody\InstructionHandler;
+	use Moody\InlineInstructionHandler;
 	use Moody\Token;
 	use Moody\TokenHandlers\InstructionProcessor;
 	use Moody\TokenVM;
 	
-	class ConfigurationHandler implements InstructionHandler {
+	class ConfigurationHandler implements InlineInstructionHandler {
 		private static $instance = null;
 	
 		private function __construct() {
@@ -29,10 +29,12 @@
 			return self::$instance;
 		}
 	
-		public function execute(Token $token, $instructionName, InstructionProcessor $processor, TokenVM $vm = null) {
+		public function execute(Token $token, $instructionName, InstructionProcessor $processor, TokenVM $vm = null, $inline = false) {
 			$args = $processor->parseArguments($token, $instructionName, 's?x');
 	
 			if(!isset($args[1])) {
+				if($inline)
+					return Configuration::get($args[0], null);
 				$token->content = Token::makeEvaluatable(Configuration::get($args[0], null));
 				return 0;
 			} else
@@ -42,7 +44,7 @@
 		}
 	
 		public function inlineExecute(Token $token, $instructionName, InstructionProcessor $processor) {
-			$this->execute($token, $instructionName, $processor);
+			return $this->execute($token, $instructionName, $processor, null, true);
 		}
 	}
 	

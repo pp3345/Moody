@@ -80,7 +80,7 @@
 				if(isset($this->handlerStack[$instruction])) {
 					if(!is_callable(array($this->handlerStack[$instruction], 'inlineExecute')))
 						throw new InstructionProcessorException('Handler for instruction "' . $matches[1] . '" does not support inline execution or is not callable', $token);
-					$this->handlerStack[$instruction]->inlineExecute($token, $matches[1], $this);
+					return $this->handlerStack[$instruction]->inlineExecute($token, $matches[1], $this);
 				} else if(!Configuration::get('ignoreunknowninstruction', false))
 					throw new InstructionProcessorException('Unknown instruction "' . $matches[1] . '"', $token);
 			}
@@ -186,8 +186,8 @@
 							$tokenValue = $totalString;
 						break;
 					case T_COMMENT:
-						$this->inlineExecute($token);
-						/* fallthrough */
+						$tokenValue = $this->inlineExecute($token);
+						break;
 					default:
 						$tokenValue = $token->content;
 				}
@@ -209,19 +209,19 @@
 							else if(is_int($tokenValue) || is_float($tokenValue) || $tokenValue === null)
 								$args[] = $tokenValue;
 							else
-								throw new InstructionProcessorException('Illegal argument ' . ($argNum + 1). ' for ' . $instructionName . ': ' . $token->content . ' given, number expected' , $origToken);
+								throw new InstructionProcessorException('Illegal argument ' . ($argNum + 1). ' for ' . $instructionName . ': ' . gettype($tokenValue) . ' ' . (string) $tokenValue . ' given, number expected' , $origToken);
 							break;
 						case 's':
 							if((is_string($tokenValue) && ($token->type == T_STRING || $token->type == T_CONSTANT_ENCAPSED_STRING)) || $tokenValue === null)
 								$args[] = $tokenValue;
 							else
-								throw new InstructionProcessorException('Illegal argument ' . ($argNum + 1). ' for ' . $instructionName . ': ' . $token->content . ' given, string expected' , $origToken);
+								throw new InstructionProcessorException('Illegal argument ' . ($argNum + 1). ' for ' . $instructionName . ': ' . gettype($tokenValue) . ' ' . (string) $tokenValue . ' given, string expected' , $origToken);
 							break;
 						case 'b':
 							if(is_bool($tokenValue) || $tokenValue === null)
 								$args[] = $tokenValue;
 							else
-								throw new InstructionProcessorException('Illegal argument ' . ($argNum + 1). ' for ' . $instructionName . ': ' . $token->content . ' given, bool expected' , $origToken);
+								throw new InstructionProcessorException('Illegal argument ' . ($argNum + 1). ' for ' . $instructionName . ': ' . gettype($tokenValue) . ' ' . (string) $tokenValue . ' given, bool expected' , $origToken);
 							break;
 						case 'x':
 							$args[] = $tokenValue;

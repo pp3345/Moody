@@ -10,13 +10,13 @@
 	
 	use Moody\InstructionProcessorException;
 	use Moody\IfInstruction;
-	use Moody\InstructionHandler;
+	use Moody\InlineInstructionHandler;
 	use Moody\ConstantContainer;
 	use Moody\Token;
 	use Moody\TokenHandlers\InstructionProcessor;
 	use Moody\TokenVM;
 	
-	class IsDefinedHandler implements InstructionHandler {
+	class IsDefinedHandler implements InlineInstructionHandler {
 		private static $instance = null;
 	
 		private function __construct() {
@@ -30,19 +30,24 @@
 			return self::$instance;
 		}
 	
-		public function execute(Token $token, $instructionName, InstructionProcessor $processor, TokenVM $vm = null) {
+		public function execute(Token $token, $instructionName, InstructionProcessor $processor, TokenVM $vm = null, $inline = false) {
 			$args = $processor->parseArguments($token, $instructionName, 's');
 				
-			if(ConstantContainer::isDefined($args[0]))
+			if(ConstantContainer::isDefined($args[0])) {
+				if($inline)
+					return true;
 				$token->content = Token::makeEvaluatable(true);
-			else
+			} else {
+				if($inline)
+					return false;
 				$token->content = Token::makeEvaluatable(false);
+			}
 			
 			return 0;
 		}
 		
 		public function inlineExecute(Token $token, $instructionName, InstructionProcessor $processor) {
-			$this->execute($token, $instructionName, $processor);
+			return $this->execute($token, $instructionName, $processor, null, true);
 		}
 	}
 	
