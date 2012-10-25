@@ -110,16 +110,25 @@
 			// Tokenize
 			$tokens = Token::tokenize('<?php ' . $instructionArgs . ' ?>', 'Moody Argument Parser');
 			
+			foreach($tokens as $token)
+				if($token->type == T_COMMA) 
+					$useCommaSeperator = true;
+			
 			$argNum = 0;
 			$optionsOffset = 0;
 			$args = $ignoreTokens = array();
+			$tokenValue = null;
+			
+			parseArgs:
 			
 			foreach($tokens as $token) {
+				if(isset($parseLastArg))
+					goto parseArg;
+				
 				if($token->type == T_OPEN_TAG
 				|| $token->type == T_CLOSE_TAG
 				|| $token->type == T_ROUND_BRACKET_OPEN
 				|| $token->type == T_ROUND_BRACKET_CLOSE
-				|| $token->type == T_COMMA
 				|| $token->type == T_WHITESPACE
 				|| in_array($token, $ignoreTokens))
 					continue;
@@ -127,27 +136,45 @@
 				switch($token->type) {
 					case T_STRING:
 						if(ConstantContainer::isDefined($token->content))
-							$tokenValue = ConstantContainer::getConstant($token->content);
+							if($tokenValue !== null)
+								$tokenValue .= ConstantContainer::getConstant($token->content);
+							else
+								$tokenValue = ConstantContainer::getConstant($token->content);
 						else
-							$tokenValue = $token->content;
+							$tokenValue .= $token->content;
 						break;
 					case T_CONSTANT_ENCAPSED_STRING:
-						$tokenValue = eval('return ' . $token->content . ';');
+						$tokenValue .= eval('return ' . $token->content . ';');
 						break;
 					case T_TRUE:
-						$tokenValue = true;
+						if($tokenValue !== null)
+							$tokenValue .= true;
+						else
+							$tokenValue = true;
 						break;
 					case T_FALSE:
-						$tokenValue = false;
+						if($tokenValue !== null)
+							$tokenValue .= false;
+						else
+							$tokenValue = false;
 						break;
 					case T_LNUMBER:
-						$tokenValue = (int) $token->content;
+						if($tokenValue !== null)
+							$tokenValue .= (int) $token->content;
+						else
+							$tokenValue = (int) $token->content;
 						break;
 					case T_DNUMBER:
-						$tokenValue = (float) $token->content;
+						if($tokenValue !== null)
+							$tokenValue .= (float) $token->content;
+						else
+							$tokenValue = (float) $token->content;
 						break;
 					case T_NULL:
-						$tokenValue = null;
+						if($tokenValue !== null)
+							$tokenValue .= null;
+						else
+							$tokenValue = null;
 						break;
 					case T_NS_SEPARATOR:
 						$totalString = "";
@@ -181,16 +208,30 @@
 						}
 
 						if(ConstantContainer::isDefined($totalString))
-							$tokenValue = ConstantContainer::getConstant($totalString);
+							if($tokenValue !== null)
+								$tokenValue .= ConstantContainer::getConstant($totalString);
+							else
+								$tokenValue = ConstantContainer::getConstant($totalString);
 						else
-							$tokenValue = $totalString;
+							$tokenValue .= $totalString;
 						break;
 					case T_COMMENT:
-						$tokenValue = $this->inlineExecute($token);
+						if($tokenValue !== null)
+							$tokenValue .= $this->inlineExecute($token);
+						else
+							$tokenValue = $this->inlineExecute($token);
 						break;
+					case T_COMMA:
+						goto parseArg;
 					default:
-						$tokenValue = $token->content;
+						if($tokenValue !== null)
+							$tokenValue .= $token->content;
+						else
+							$tokenValue = $token->content;
 				}
+				
+				if(isset($useCommaSeperator))
+					continue;
 				
 				parseArg:
 				
@@ -212,7 +253,7 @@
 								throw new InstructionProcessorException('Illegal argument ' . ($argNum + 1). ' for ' . $instructionName . ': ' . gettype($tokenValue) . ' ' . (string) $tokenValue . ' given, number expected' , $origToken);
 							break;
 						case 's':
-							if((is_string($tokenValue) && ($token->type == T_STRING || $token->type == T_CONSTANT_ENCAPSED_STRING)) || $tokenValue === null)
+							if(is_string($tokenValue) || $tokenValue === null)
 								$args[] = $tokenValue;
 							else
 								throw new InstructionProcessorException('Illegal argument ' . ($argNum + 1). ' for ' . $instructionName . ': ' . gettype($tokenValue) . ' ' . (string) $tokenValue . ' given, string expected' , $origToken);
@@ -228,7 +269,16 @@
 					}
 				}
 				
+				$tokenValue = null;
 				$argNum++;
+				
+				if(isset($parseLastArg))
+					break;
+			}
+			
+			if($tokenValue !== null) {
+				$parseLastArg = true;
+				goto parseArgs;
 			}
 			
 			if((strpos($optionsStr, '?') !== false && $argNum < strpos($optionsStr, '?')) || ($argNum < count($options) && strpos($optionsStr, '?') === false))
