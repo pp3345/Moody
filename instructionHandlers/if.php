@@ -41,10 +41,10 @@
 			
 					$cond = "";
 					$result = false;
-			
+					
 					// Build parsable condition
 					foreach($args as $arg) {
-						if(is_string($arg) && strtolower($arg) !== "true" && strtolower($arg) !== "false") {
+						if(is_string($arg) && strlen($arg) && strtolower($arg) !== "true" && strtolower($arg) !== "false") {
 							$tokens = Token::tokenize('<?php ' . $arg . ' ?>');
 							if($tokens[1]->type == T_STRING)
 								$arg = Token::makeEvaluatable($arg);
@@ -60,7 +60,7 @@
 						
 						$cond .= $arg;
 					}
-					
+
 					$result = eval('return (int) (bool) (' . $cond . ');');
 					
 					if($result === 1)  {
