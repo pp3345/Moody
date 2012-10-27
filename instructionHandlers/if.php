@@ -51,17 +51,12 @@
 						} else if(is_string($arg) && !strlen($arg))
 							$arg = "''";
 							
-						
-						switch($arg) {
-							case true:
-								$arg = "true";
-								break;
-							case false:
-								$arg = "false";
-								break;
-							case null:
-								$arg = "null";
-						}
+						if($arg === true)
+							$arg = "true";
+						else if($arg === false)
+							$arg = "false";
+						else if($arg === null)
+							$arg = "null";
 						
 						$cond .= $arg;
 					}
