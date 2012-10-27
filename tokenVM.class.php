@@ -111,7 +111,7 @@
 			executeHandler:
 
 			if(!is_object($executor))
-				throw new VMException('Handler for token is not a object', $token);
+				throw new VMException('Handler for token is not an object', $token);
 				
 			if(!is_callable(array($executor, 'execute')))
 				throw new VMException('The execute method of the token handler does not exist or is not callable from the virtual machines\' scope', $token);
