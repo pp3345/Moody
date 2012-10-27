@@ -48,12 +48,20 @@
 							$tokens = Token::tokenize('<?php ' . $arg . ' ?>');
 							if($tokens[1]->type == T_STRING)
 								$arg = Token::makeEvaluatable($arg);
-						}
+						} else if(is_string($arg) && !strlen($arg))
+							$arg = "''";
+							
 						
-						if($arg === true)
-							$arg = "true";
-						if($arg === false)
-							$arg = "false";
+						switch($arg) {
+							case true:
+								$arg = "true";
+								break;
+							case false:
+								$arg = "false";
+								break;
+							case null:
+								$arg = "null";
+						}
 						
 						$cond .= $arg;
 					}
