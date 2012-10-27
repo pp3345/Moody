@@ -54,7 +54,7 @@
 				
 				$token->content = Token::makeEvaluatable($value);
 				
-				return TokenVM::DELETE_TOKEN;
+				return 0;
 			}
 	
 			public function inlineExecute(Token $token, $instructionName, InstructionProcessor $processor) {
