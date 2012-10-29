@@ -8,6 +8,8 @@
 	
 	namespace Moody\InstructionHandlers {
 	
+	use Moody\InstructionHandler;
+
 	use Moody\InstructionProcessorException;
 	use Moody\IfInstruction;
 	use Moody\InlineInstructionHandler;
@@ -31,7 +33,7 @@
 			return self::$instance;
 		}
 	
-		public function execute(Token $token, $instructionName, InstructionProcessor $processor, TokenVM $vm = null, $inline = false) {
+		public function execute(Token $token, $instructionName, InstructionProcessor $processor, TokenVM $vm = null, $executionType = 0) {
 			$args = $processor->parseArguments($token, $instructionName, 's');
 				
 			if(!ConstantContainer::isDefined($args[0]))
@@ -39,16 +41,12 @@
 			
 			$constValue = ConstantContainer::getConstant($args[0]);
 			
-			if($inline)
+			if($executionType & InstructionProcessor::EXECUTE_TYPE_INLINE)
 				return $constValue;
 			
 			$token->content = Token::makeEvaluatable($constValue);
 			
 			return 0;
-		}
-		
-		public function inlineExecute(Token $token, $instructionName, InstructionProcessor $processor) {
-			return $this->execute($token, $instructionName, $processor, null, true);
 		}
 	}
 	

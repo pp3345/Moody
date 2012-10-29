@@ -29,7 +29,7 @@
 			return self::$instance;
 		}
 	
-		public function execute(Token $token, $instructionName, InstructionProcessor $processor, TokenVM $vm = null, $inline = false) {
+		public function execute(Token $token, $instructionName, InstructionProcessor $processor, TokenVM $vm = null, $executionType = 0) {
 			$args = $processor->parseArguments($token, $instructionName, 's?bb');
 			// arg 0 = code; arg 1 = execute vm? = true; arg 2 = make executable? true
 			
@@ -67,17 +67,13 @@
 			$result = eval($args[0]);
 			
 			if($result !== null) {
-				if($inline)
+				if($executionType & InstructionProcessor::EXECUTE_TYPE_INLINE)
 					return $result;
 				$token->content = !isset($args[2]) || $args[2] === true ? Token::makeEvaluatable($result) : $result;
 				return 0;
 			}
 			
 			return TokenVM::DELETE_TOKEN;
-		}
-		
-		public function inlineExecute(Token $token, $instructionName, InstructionProcessor $processor) {
-			return $this->execute($token, $instructionName, $processor, null, true);
 		}
 	}
 	

@@ -28,14 +28,10 @@
 			return self::$instance;
 		}
 	
-		public function execute(Token $token, $instructionName, InstructionProcessor $processor, TokenVM $vm = null, $inline = false) {
+		public function execute(Token $token, $instructionName, InstructionProcessor $processor, TokenVM $vm = null, $executionType = 0) {
 			$args = $processor->parseArguments($token, $instructionName, 's');
 
 			throw new InstructionProcessorException($args[0], $token);
-		}
-
-		public function inlineExecute(Token $token, $instructionName, InstructionProcessor $processor) {
-			return $this->execute($token, $instructionName, $processor, null, true);
 		}
 	}
 	

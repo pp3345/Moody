@@ -28,19 +28,15 @@
 				return self::$instance;
 			}
 	
-			public function execute(Token $token, $instructionName, InstructionProcessor $processor, TokenVM $vm = null, $inline = false) {
+			public function execute(Token $token, $instructionName, InstructionProcessor $processor, TokenVM $vm = null, $executionType = 0) {
 				$args = $processor->parseArguments($token, $instructionName, 'x');
 				
-				if($inline)
+				if($executionType & InstructionProcessor::EXECUTE_TYPE_INLINE)
 					return (bool) $args[0];
 				
 				$token->content = Token::makeEvaluatable((bool) $args[0]);
 				
 				return 0;
-			}
-	
-			public function inlineExecute(Token $token, $instructionName, InstructionProcessor $processor) {
-				return $this->execute($token, $instructionName, $processor, null, true);
 			}
 		}
 	

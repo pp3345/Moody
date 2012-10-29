@@ -18,8 +18,12 @@
 	}
 	
 	interface InlineInstructionHandler extends InstructionHandler {
-		public function inlineExecute(Token $token, $instructionName, TokenHandlers\InstructionProcessor $processor);
-		public function execute(Token $token, $instructionName, TokenHandlers\InstructionProcessor $processor, TokenVM $vm = null, $inline = false);
+		public function execute(Token $token, $instructionName, TokenHandlers\InstructionProcessor $processor, TokenVM $vm = null, $executionType = 0);
+	}
+	
+	interface DefaultInstructionHandler extends InstructionHandler {
+		public function execute(Token $token, $instructionName, TokenHandlers\InstructionProcessor $processor, TokenVM $vm = null, $executionType = 0);
+		public function canExecute(Token $token, $instructionName, TokenHandlers\InstructionProcessor $processor);
 	}
 	
 	}

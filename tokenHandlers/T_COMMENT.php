@@ -8,6 +8,10 @@
 	
 	namespace Moody\TokenHandlers {
 	
+	use Moody\InstructionHandlerWithRegister;
+
+	use Moody\InlineInstructionHandler;
+	use Moody\DefaultInstructionHandler;
 	use Moody\TokenHandlerWithRegister;
 	use Moody\TokenVM;
 	use Moody\Token;
@@ -22,6 +26,9 @@
 	class InstructionProcessor implements TokenHandlerWithRegister {
 		private static $instance = null;
 		private $handlerStack = array();
+		private $defaultHandlerStack = array();
+		const EXECUTE_TYPE_INLINE = 1;
+		const EXECUTE_TYPE_DEFAULT = 2;
 	
 		public static function getInstance() {
 			if(!self::$instance)
@@ -39,18 +46,32 @@
 			$matches = array();
 			$vmRetval = 0;
 			
-			if(preg_match('~^\s*(\.([A-Za-z_]+))~', $content, $matches)) {
+			if(preg_match('~^\s*(\.([A-Za-z_:]+))~', $content, $matches)) {
 				$instruction = strtolower($matches[2]);
 
 				if(isset($this->handlerStack[$instruction])) {
-					if(!is_callable(array($this->handlerStack[$instruction], 'execute')))
+					if(!($this->handlerStack[$instruction] instanceof InstructionHandler))
 						throw new InstructionProcessorException('Handler for instruction "' . $matches[1] . '" does not exist or is not callable', $token);
 					$vmRetval = $this->handlerStack[$instruction]->execute($token, $matches[1], $this, $vm);
-				} else if(!Configuration::get('ignoreunknowninstruction', false))
+					goto end;
+				} else if($this->defaultHandlerStack) { 
+					foreach($this->defaultHandlerStack as $handler) {
+						if(!($handler instanceof DefaultInstructionHandler))
+							throw new InstructionProcessorException('Default Handler for instruction "' . $matches[1] . '" is invalid', $token);
+						if($handler->canExecute($token, $matches[1], $this)) {
+							$vmRetval = $handler->execute($token, $matches[1], $this, $vm, self::EXECUTE_TYPE_DEFAULT);
+							goto end;
+						}
+					}
+				}
+				
+				if(!Configuration::get('ignoreunknowninstruction', false))
 					throw new InstructionProcessorException('Unknown instruction "' . $matches[1] . '"', $token);
-			} else if(Configuration::get('deletecomments', false))
+			} else if(Configuration::get('deletecomments', true))
 				$vmRetval = TokenVM::DELETE_TOKEN;
 	
+			end:
+			
 			return (TokenVM::NEXT_HANDLER | TokenVM::NEXT_TOKEN) ^ $vmRetval;
 		}
 		
@@ -59,13 +80,11 @@
 				
 			$matches = array();
 			
-			if(preg_match('~^\s*(\.([A-Za-z_]+))~', $content, $matches)) {
+			if(preg_match('~^\s*(\.([A-Za-z_:]+))~', $content, $matches)) {
 				$instruction = strtolower($matches[2]);
 
-				if(isset($this->handlerStack[$instruction])) {
-					if(is_callable(array($this->handlerStack[$instruction], 'register')))
-						$this->handlerStack[$instruction]->register($token, $matches[1], $this, $vm);
-				}
+				if(isset($this->handlerStack[$instruction]) && $this->handlerStack[$instruction] instanceof InstructionHandlerWithRegister)
+					$this->handlerStack[$instruction]->register($token, $matches[1], $this, $vm);
 			}
 		}
 		
@@ -74,20 +93,35 @@
 				
 			$matches = array();
 				
-			if(preg_match('~^\s*(\.([A-Za-z_]+))~', $content, $matches)) {
+			if(preg_match('~^\s*(\.([A-Za-z_:]+))~', $content, $matches)) {
 				$instruction = strtolower($matches[2]);
 			
 				if(isset($this->handlerStack[$instruction])) {
-					if(!is_callable(array($this->handlerStack[$instruction], 'inlineExecute')))
-						throw new InstructionProcessorException('Handler for instruction "' . $matches[1] . '" does not support inline execution or is not callable', $token);
-					return $this->handlerStack[$instruction]->inlineExecute($token, $matches[1], $this);
-				} else if(!Configuration::get('ignoreunknowninstruction', false))
+					if(!($this->handlerStack[$instruction] instanceof InlineInstructionHandler))
+						throw new InstructionProcessorException($matches[1] . '" does not support inline execution', $token);
+					return $this->handlerStack[$instruction]->execute($token, $matches[1], $this, null, self::EXECUTE_TYPE_INLINE);
+				} else if($this->defaultHandlerStack) {
+					foreach($this->defaultHandlerStack as $handler) {
+						if(!($handler instanceof InlineInstructionHandler))
+							continue;
+						if(!($handler instanceof DefaultInstructionHandler))
+							throw new InstructionProcessorException('Default handler for instruction "' . $matches[1] . '" is invalid', $token);
+						if($handler->canExecute($token, $matches[1], $this))
+							return $handler->execute($token, $matches[1], $this, null, self::EXECUTE_TYPE_DEFAULT | self::EXECUTE_TYPE_INLINE);
+					}
+				}
+				
+				if(!Configuration::get('ignoreunknowninstruction', false))
 					throw new InstructionProcessorException('Unknown instruction "' . $matches[1] . '"', $token);
 			}
 		}
 		
 		public function registerHandler($instruction, InstructionHandler $handler) {
 			$this->handlerStack[$instruction] = $handler;
+		}
+		
+		public function registerDefaultHandler(DefaultInstructionHandler $handler) {
+			$this->defaultHandlerStack[] = $handler;
 		}
 		
 		public function parseArguments(Token $origToken, $instructionName, $optionsStr) {
