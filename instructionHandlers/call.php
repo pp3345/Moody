@@ -47,7 +47,7 @@
 						throw new InstructionProcessorException($args[0] . '() does not exist', $token);
 				
 				if(!is_callable($function))
-					throw new InstructionProcessorException($args[0] . '() is not callable from the current scope', $token);
+					throw new InstructionProcessorException(($executionType & InstructionProcessor::EXECUTE_TYPE_DEFAULT ? substr($instructionName, 1) : $args[0]). '() is not callable from the current scope', $token);
 				
 				$parameters = $args;
 				if(!($executionType & InstructionProcessor::EXECUTE_TYPE_DEFAULT))
