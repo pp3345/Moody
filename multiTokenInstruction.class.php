@@ -2,7 +2,7 @@
 
 	/****************************************************************/
 	/* Moody                                                        */
-	/* ifInstruction.class.php                 					    */
+	/* multiTokenInstruction.class.php                 				*/
 	/* 2012 Yussuf Khalil                                           */
 	/****************************************************************/
 	
@@ -11,27 +11,27 @@
 	const END_TOKEN_NO_EXECUTE = 1;
 	const END_TOKEN_EXECUTE = 2;
 	
-	class IfInstruction {
+	class MultiTokenInstruction {
 		private static $instructionStack = array();
 		private static $nestedStack = array();
 		private $token;
 		private $endToken;
 		private $endTokenAction = END_TOKEN_EXECUTE;
 		
-		public function __construct(Token $token) {
-			self::$instructionStack[] = $this;
-			self::$nestedStack[] = $this;
+		public function __construct(Token $token, $class) {
+			self::$instructionStack[$class][] = $this;
+			self::$nestedStack[$class][] = $this;
 			$this->token = $token;
 		}
 		
-		public static function setEndToken(Token $token) {
-			if(!self::$nestedStack)
-				throw new InstructionProcessorException('Endif or Else while no if is active', $token);
+		public static function setEndToken(Token $token, $class) {
+			if(!isset(self::$nestedStack[$class]) || !self::$nestedStack[$class])
+				throw new InstructionProcessorException('End token of type ' . $class . ' while not active', $token);
 			
-			end(self::$nestedStack);
+			end(self::$nestedStack[$class]);
 			
-			self::$nestedStack[key(self::$nestedStack)]->endToken = $token;
-			unset(self::$nestedStack[key(self::$nestedStack)]);
+			self::$nestedStack[$class][key(self::$nestedStack[$class])]->endToken = $token;
+			unset(self::$nestedStack[$class][key(self::$nestedStack[$class])]);
 		}
 		
 		public function getToken() {
@@ -50,8 +50,8 @@
 			return $this->endTokenAction;
 		}
 		
-		public static function getAll() {
-			return self::$instructionStack;
+		public static function getAll($class) {
+			return self::$instructionStack[$class];
 		}
 	}
 	

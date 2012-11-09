@@ -10,7 +10,7 @@
 	
 	use Moody\END_TOKEN_ELSE;
 	use Moody\InstructionProcessorException;
-	use Moody\IfInstruction;
+	use Moody\MultiTokenInstruction;
 	use Moody\InstructionHandlerWithRegister;
 	use Moody\ConstantContainer;
 	use Moody\Token;
@@ -34,7 +34,7 @@
 			$args = $processor->parseArguments($token, $instructionName, 'x');
 			
 			// Search jump point
-			foreach(IfInstruction::getAll() as $instruction) {
+			foreach(MultiTokenInstruction::getAll('if') as $instruction) {
 				if($instruction->getToken() == $token) {
 					if(!($instruction->getEndToken() instanceof Token))
 						throw new InstructionProcessorException('Invalid end token for ' . $instructionName . ' - Probably you forgot an endif?', $token);
@@ -77,7 +77,7 @@
 		}
 	
 		public function register(Token $token, $instructionName, InstructionProcessor $processor, TokenVM $vm) {
-			new IfInstruction($token);
+			new MultiTokenInstruction($token, 'if');
 		}
 	}
 	

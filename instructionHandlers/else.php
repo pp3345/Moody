@@ -10,7 +10,7 @@
 	
 	use Moody\END_TOKEN_NO_EXECUTE;
 	use Moody\InstructionProcessorException;
-	use Moody\IfInstruction;
+	use Moody\MultiTokenInstruction;
 	use Moody\InstructionHandlerWithRegister;
 	use Moody\Token;
 	use Moody\TokenHandlers\InstructionProcessor;
@@ -31,7 +31,7 @@
 	
 		public function execute(Token $token, $instructionName, InstructionProcessor $processor, TokenVM $vm) {
 			// Find end token
-			foreach(IfInstruction::getAll() as $instruction) {
+			foreach(MultiTokenInstruction::getAll('if') as $instruction) {
 				if($instruction->getToken() == $token) {
 					if(!($instruction->getEndToken() instanceof Token))
 						throw new InstructionProcessorException('Invalid end token for ' . $instructionName . ' - Probably you forgot an endif?', $token);
@@ -41,7 +41,7 @@
 			}
 			
 			// Find start token
-			foreach(IfInstruction::getAll() as $instruction) {
+			foreach(MultiTokenInstruction::getAll('if') as $instruction) {
 				if($instruction->getEndToken() == $token) {
 					if($instruction->getEndTokenAction() == \Moody\END_TOKEN_NO_EXECUTE) {
 						$endInstruction->setEndTokenAction(\Moody\END_TOKEN_NO_EXECUTE);
@@ -55,8 +55,8 @@
 		}
 	
 		public function register(Token $token, $instructionName, InstructionProcessor $processor, TokenVM $vm) {
-			IfInstruction::setEndToken($token);
-			new IfInstruction($token);
+			MultiTokenInstruction::setEndToken($token, 'if');
+			new MultiTokenInstruction($token, 'if');
 		}
 	}
 	

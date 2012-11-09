@@ -12,7 +12,7 @@
 	use Moody\InstructionHandlerWithRegister;
 	use Moody\Token;
 	use Moody\TokenVM;
-	use Moody\IfInstruction;
+	use Moody\MultiTokenInstruction;
 
 	class EndIfHandler implements InstructionHandlerWithRegister {
 		private static $instance;
@@ -32,7 +32,7 @@
 		}
 		
 		public function register(Token $token, $instructionName, InstructionProcessor $processor, TokenVM $vm) {
-			IfInstruction::setEndToken($token);
+			MultiTokenInstruction::setEndToken($token, 'if');
 		}
 	}
 	
