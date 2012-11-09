@@ -30,6 +30,10 @@
 		const EXECUTE_TYPE_INLINE = 1;
 		const EXECUTE_TYPE_DEFAULT = 2;
 	
+		/**
+		 * 
+		 * @return InstructionProcessor
+		 */
 		public static function getInstance() {
 			if(!self::$instance)
 				self::$instance = new self;

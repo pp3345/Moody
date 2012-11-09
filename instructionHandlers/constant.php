@@ -8,8 +8,8 @@
 	
 	namespace Moody\InstructionHandlers {
 	
+	use Moody\DefaultInstructionHandler;
 	use Moody\InstructionHandler;
-
 	use Moody\InstructionProcessorException;
 	use Moody\IfInstruction;
 	use Moody\InlineInstructionHandler;
@@ -18,13 +18,14 @@
 	use Moody\TokenHandlers\InstructionProcessor;
 	use Moody\TokenVM;
 	
-	class GetConstantHandler implements InlineInstructionHandler {
+	class GetConstantHandler implements InlineInstructionHandler, DefaultInstructionHandler {
 		private static $instance = null;
 	
 		private function __construct() {
 			InstructionProcessor::getInstance()->registerHandler('const', $this);
 			InstructionProcessor::getInstance()->registerHandler('constant', $this);
 			InstructionProcessor::getInstance()->registerHandler('getconstant', $this);
+			InstructionProcessor::getInstance()->registerDefaultHandler($this);
 		}
 	
 		public static function getInstance() {
@@ -34,7 +35,11 @@
 		}
 	
 		public function execute(Token $token, $instructionName, InstructionProcessor $processor, TokenVM $vm = null, $executionType = 0) {
-			$args = $processor->parseArguments($token, $instructionName, 's');
+			if($executionType & InstructionProcessor::EXECUTE_TYPE_DEFAULT)
+				$args = array(substr($instructionName, 1));
+			else
+				$args = $processor->parseArguments($token, $instructionName, 's');
+				
 				
 			if(!ConstantContainer::isDefined($args[0]))
 				throw new InstructionProcessorException($instructionName . ': Undefined constant: ' . $args[0], $token);
@@ -48,6 +53,17 @@
 			
 			return 0;
 		}
+
+	 	public function canExecute(Token $token, $instructionName, InstructionProcessor $processor) {
+			if($processor->parseArguments($token, $instructionName, ''))
+				return false;
+			
+			if(!ConstantContainer::isDefined(substr($instructionName, 1)))
+				return false;
+			
+			return true;
+		}
+
 	}
 	
 	}
