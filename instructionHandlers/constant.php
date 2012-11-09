@@ -40,7 +40,6 @@
 			else
 				$args = $processor->parseArguments($token, $instructionName, 's');
 				
-				
 			if(!ConstantContainer::isDefined($args[0]))
 				throw new InstructionProcessorException($instructionName . ': Undefined constant: ' . $args[0], $token);
 			
