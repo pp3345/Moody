@@ -12,7 +12,7 @@
 	
 	require_once 'configuration.class.php';
 	require_once 'constantContainer.class.php';
-	require_once 'ifInstruction.class.php';
+	require_once 'multiTokenInstruction.class.php';
 	require_once 'instructionHandler.interface.php';
 	require_once 'instructionProcessorException.class.php';
 	require_once 'moodyException.class.php';
@@ -27,7 +27,7 @@
 	$source .= '/* .mapVariable \'$code\' \'$code\' */';
 	$source .= '/* .include "configuration.class.php" */';
 	$source .= '/* .include "constantContainer.class.php" */';
-	$source .= '/* .include "ifInstruction.class.php" */';
+	$source .= '/* .include "multiTokenInstruction.class.php" */';
 	$source .= '/* .include "instructionHandler.interface.php" */';
 	$source .= '/* .include "instructionProcessorException.class.php" */';
 	$source .= '/* .include "moodyException.class.php" */';
