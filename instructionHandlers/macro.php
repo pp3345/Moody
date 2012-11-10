@@ -9,12 +9,12 @@
 	namespace Moody\InstructionHandlers {
 	
 	use Moody\InstructionProcessorException;
-	use Moody\InstructionHandler;
+	use Moody\InlineInstructionHandler;
 	use Moody\Token;
 	use Moody\TokenHandlers\InstructionProcessor;
 	use Moody\TokenVM;
 	
-	class MacroHandler implements InstructionHandler {
+	class MacroHandler implements InlineInstructionHandler {
 		private static $instance = null;
 	
 		private function __construct() {
@@ -27,9 +27,12 @@
 			return self::$instance;
 		}
 	
-		public function execute(Token $token, $instructionName, InstructionProcessor $processor, TokenVM $vm = null) {
+		public function execute(Token $token, $instructionName, InstructionProcessor $processor, TokenVM $vm = null, $executionType = 0) {
 			// New macro definition
 			if(strtolower($instructionName) == '.macro') {
+				if($executionType & InstructionProcessor::EXECUTE_TYPE_INLINE)
+					throw new InstructionProcessorException($instructionName . ' does not support inline execution', $token);
+				
 				$args = $processor->parseArguments($token, $instructionName, 'ss');
 				
 				if(!strlen($args[0]))
@@ -58,7 +61,13 @@
 			
 			$args = $processor->parseArguments($token, $instructionName, $options);
 			
-			$vm->insertTokenArray($macro->buildCode($args));
+			if($executionType & InstructionProcessor::EXECUTE_TYPE_INLINE) {
+				$code = "";
+				foreach($macro->buildCode($args) as $token)
+					$code .= $token->content;
+				return $code;
+			} else
+				$vm->insertTokenArray($macro->buildCode($args));
 
 			return TokenVM::DELETE_TOKEN;
 		}
