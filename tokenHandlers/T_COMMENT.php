@@ -102,7 +102,7 @@
 			
 				if(isset($this->handlerStack[$instruction])) {
 					if(!($this->handlerStack[$instruction] instanceof InlineInstructionHandler))
-						throw new InstructionProcessorException($matches[1] . '" does not support inline execution', $token);
+						throw new InstructionProcessorException($matches[1] . ' does not support inline execution', $token);
 					return $this->handlerStack[$instruction]->execute($token, $matches[1], $this, null, self::EXECUTE_TYPE_INLINE);
 				} else if($this->defaultHandlerStack) {
 					foreach($this->defaultHandlerStack as $handler) {
