@@ -50,7 +50,7 @@
 			$matches = array();
 			$vmRetval = 0;
 			
-			if(preg_match('~^\s*(\.([A-Za-z_:]+))~', $content, $matches)) {
+			if(preg_match('~^\s*(\.([A-Za-z_:\\\0-9]+))~', $content, $matches)) {
 				$instruction = strtolower($matches[2]);
 
 				if(isset($this->handlerStack[$instruction])) {
@@ -84,7 +84,7 @@
 				
 			$matches = array();
 			
-			if(preg_match('~^\s*(\.([A-Za-z_:]+))~', $content, $matches)) {
+			if(preg_match('~^\s*(\.([A-Za-z_:\\\0-9]+))~', $content, $matches)) {
 				$instruction = strtolower($matches[2]);
 
 				if(isset($this->handlerStack[$instruction]) && $this->handlerStack[$instruction] instanceof InstructionHandlerWithRegister)
@@ -97,7 +97,7 @@
 				
 			$matches = array();
 				
-			if(preg_match('~^\s*(\.([A-Za-z_:]+))~', $content, $matches)) {
+			if(preg_match('~^\s*(\.([A-Za-z_:\\\0-9]+))~', $content, $matches)) {
 				$instruction = strtolower($matches[2]);
 			
 				if(isset($this->handlerStack[$instruction])) {
