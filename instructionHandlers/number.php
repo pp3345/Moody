@@ -37,10 +37,6 @@
 				
 				return 0;
 			}
-	
-			public function inlineExecute(Token $token, $instructionName, InstructionProcessor $processor) {
-				return $this->execute($token, $instructionName, $processor, null, true);
-			}
 		}
 	
 	}
