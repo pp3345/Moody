@@ -36,56 +36,53 @@
 			if($executionType & InstructionProcessor::EXECUTE_TYPE_DEFAULT) {
 				$args = $processor->parseArguments($token, $instructionName, 'sx');
 				$constantName = substr($instructionName, 1);
+				$validOperators = array('(', ')', '+', '-', '*', '/', '|', '&', '^', '>>', '<<');
+				$args = $processor->parseArguments($token, $instructionName, 'sn?snsnsnsnsnsnsnsnsnsnsn');
+				foreach($args as $index => $arg) {
+					if(!$index)
+						continue;
+					if(!is_int($arg) && !in_array($arg, $validOperators))
+						throw new InstructionProcessorException('Math syntax error');
+					$calc .= $arg;
+				}
+				
+				if(($value = eval('return (' . $calc . ');')) === false)
+					throw new InstructionProcessorException('Math syntax error');
+				
 				switch($args[0]) {
 					case '=':
-						ConstantContainer::define($constantName, $args[1]);
+						ConstantContainer::define($constantName, $value);
 						break;
 					case '.=':
-						ConstantContainer::define($constantName, ConstantContainer::getConstant($constantName) . $args[1]);
+						ConstantContainer::define($constantName, ConstantContainer::getConstant($constantName) . $value);
 						break;
 					case '+=':
+						ConstantContainer::define($constantName, ConstantContainer::getConstant($constantName) + $value);
+						break;
 					case '-=':
+						ConstantContainer::define($constantName, ConstantContainer::getConstant($constantName) - $value);
+						break;
 					case '*=':
+						ConstantContainer::define($constantName, ConstantContainer::getConstant($constantName) * $value);
+						break;
 					case '/=':
+						ConstantContainer::define($constantName, ConstantContainer::getConstant($constantName) / $value);
+						break;
 					case '|=':
-					case '&=':
+						ConstantContainer::define($constantName, ConstantContainer::getConstant($constantName) | $value);
+						break;
 					case '^=':
-						$validOperators = array('(', ')', '+', '-', '*', '/', '|', '&', '^');
-						$args = $processor->parseArguments($token, $instructionName, 'sn?snsnsnsnsnsnsnsnsnsnsn');
-						foreach($args as $index => $arg) {
-							if(!$index)
-								continue;
-							if(!is_int($arg) && !in_array($arg, $validOperators))
-								throw new InstructionProcessorException('Math syntax error');
-							$calc .= $arg;
-						}
-						
-						if(($value = eval('return (' . $calc . ');')) === false)
-							throw new InstructionProcessorException('Math syntax error');
-						
-						switch($args[0]) {
-							case '+=':
-								ConstantContainer::define($constantName, ConstantContainer::getConstant($constantName) + $value);
-								break;
-							case '-=':
-								ConstantContainer::define($constantName, ConstantContainer::getConstant($constantName) - $value);
-								break;
-							case '*=':
-								ConstantContainer::define($constantName, ConstantContainer::getConstant($constantName) * $value);
-								break;
-							case '/=':
-								ConstantContainer::define($constantName, ConstantContainer::getConstant($constantName) / $value);
-								break;
-							case '|=':
-								ConstantContainer::define($constantName, ConstantContainer::getConstant($constantName) | $value);
-								break;
-							case '^=':
-								ConstantContainer::define($constantName, ConstantContainer::getConstant($constantName) ^ $value);
-								break;
-							case '&=':
-								ConstantContainer::define($constantName, ConstantContainer::getConstant($constantName) & $value);
-								break;
-						}
+						ConstantContainer::define($constantName, ConstantContainer::getConstant($constantName) ^ $value);
+						break;
+					case '&=':
+						ConstantContainer::define($constantName, ConstantContainer::getConstant($constantName) & $value);
+						break;
+					case '>>=':
+						ConstantContainer::define($constantName, ConstantContainer::getConstant($constantName) >> $value);
+						break;
+					case '<<=':
+						ConstantContainer::define($constantName, ConstantContainer::getConstant($constantName) << $value);
+						break;
 				}
 			} else {
 				$args = $processor->parseArguments($token, $instructionName, 'sx');
@@ -98,7 +95,7 @@
 	 	public function canExecute(Token $token, $instructionName, InstructionProcessor $processor) {
 	 		$args = $processor->parseArguments($token, $instructionName, '');
 	 		
-	 		$validOperators = array('=', '.=', '+=', '-=', '*=', '/=', '|=', '&=', '^=');
+	 		$validOperators = array('=', '.=', '+=', '-=', '*=', '/=', '|=', '&=', '^=', '<<=', '>>=');
 	 		
 	 		if(in_array($args[0], $validOperators) && !($args[0] != '=' && !ConstantContainer::isDefined(substr($instructionName, 1))))
 	 			return true;
