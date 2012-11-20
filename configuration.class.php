@@ -16,10 +16,12 @@
 		}
 		
 		public static function set($path, $value) {
-			return self::$configuration[$path] = $value;
+			return self::$configuration[strtolower($path)] = $value;
 		}
 		
 		public static function get($path, $defaultValue = null) {
+			$path = strtolower($path);
+			
 			if(isset(self::$configuration[$path]))
 				return self::$configuration[$path];
 			return $defaultValue;
