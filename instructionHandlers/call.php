@@ -64,7 +64,8 @@
 			}
 
 			public function canExecute(Token $token, $instructionName, InstructionProcessor $processor) {
-				$instructionName = substr($instructionName, 1);
+				if(substr($instructionName, 0, 1) == '.')
+					$instructionName = substr($instructionName, 1);
 				if(strpos($instructionName, '::')) {
 					$parts = explode('::', $instructionName, 2);
 					if(!method_exists($parts[0], $parts[1]))

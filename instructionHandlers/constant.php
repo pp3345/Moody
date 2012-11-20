@@ -56,7 +56,7 @@
 			if($processor->parseArguments($token, $instructionName, ''))
 				return false;
 			
-			if(!ConstantContainer::isDefined(substr($instructionName, 1)))
+			if(!ConstantContainer::isDefined(substr($instructionName, 0, 1) == '.' ? substr($instructionName, 1) : $instructionName))
 				return false;
 			
 			return true;

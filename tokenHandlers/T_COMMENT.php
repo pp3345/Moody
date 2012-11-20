@@ -49,10 +49,12 @@
 			
 			$matches = array();
 			$vmRetval = 0;
-			
-			if(preg_match('~^\s*(\.([A-Za-z_:\\\0-9]+))~', $content, $matches)) {
-				$instruction = strtolower($matches[2]);
 
+			if(preg_match(Configuration::get('requireinstructiondot', true) ? '~^\s*(\.([A-Za-z_:\\\0-9]+))~' : '~^\s*(\.?[A-Za-z_:\\\0-9]+)~', $content, $matches)) {
+				$instruction = strtolower($matches[1]);
+				if(substr($instruction, 0, 1) == '.')
+					$instruction = substr($instruction, 1);
+				
 				if(isset($this->handlerStack[$instruction])) {
 					if(!($this->handlerStack[$instruction] instanceof InstructionHandler))
 						throw new InstructionProcessorException('Handler for instruction "' . $matches[1] . '" does not exist or is not callable', $token);
@@ -84,8 +86,10 @@
 				
 			$matches = array();
 			
-			if(preg_match('~^\s*(\.([A-Za-z_:\\\0-9]+))~', $content, $matches)) {
-				$instruction = strtolower($matches[2]);
+			if(preg_match(Configuration::get('requireinstructiondot', true) ? '~^\s*(\.([A-Za-z_:\\\0-9]+))~' : '~^\s*(\.?[A-Za-z_:\\\0-9]+)~', $content, $matches)) {
+				$instruction = strtolower($matches[1]);
+				if(substr($instruction, 0, 1) == '.')
+					$instruction = substr($instruction, 1);
 
 				if(isset($this->handlerStack[$instruction]) && $this->handlerStack[$instruction] instanceof InstructionHandlerWithRegister)
 					$this->handlerStack[$instruction]->register($token, $matches[1], $this, $vm);
@@ -97,8 +101,10 @@
 				
 			$matches = array();
 				
-			if(preg_match('~^\s*(\.([A-Za-z_:\\\0-9]+))~', $content, $matches)) {
-				$instruction = strtolower($matches[2]);
+			if(preg_match(Configuration::get('requireinstructiondot', true) ? '~^\s*(\.([A-Za-z_:\\\0-9]+))~' : '~^\s*(\.?[A-Za-z_:\\\0-9]+)~', $content, $matches)) {
+				$instruction = strtolower($matches[1]);
+				if(substr($instruction, 0, 1) == '.')
+					$instruction = substr($instruction, 1);
 			
 				if(isset($this->handlerStack[$instruction])) {
 					if(!($this->handlerStack[$instruction] instanceof InlineInstructionHandler))
