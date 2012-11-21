@@ -70,6 +70,7 @@
 					if($result === false)
 						throw new InstructionProcessorException('If-condition ' . $cond . ' is invalid', $token);
 					
+					$instruction->setEndTokenAction(\Moody\END_TOKEN_EXECUTE);
 					$vm->jump($instruction->getEndToken());
 					return TokenVM::JUMP | TokenVM::DELETE_TOKEN;
 				}
