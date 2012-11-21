@@ -45,6 +45,7 @@
 					}
 					
 					$vm->jump($instruction->getEndToken());
+					$instruction->setEndTokenAction(\Moody\END_TOKEN_EXECUTE);
 					return TokenVM::JUMP | TokenVM::DELETE_TOKEN;
 				}
 			}
