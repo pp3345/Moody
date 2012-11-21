@@ -31,8 +31,9 @@
 	
 			public function execute(Token $token, $instructionName, InstructionProcessor $processor, TokenVM $vm = null, $executionType = 0) {
 				if($executionType & InstructionProcessor::EXECUTE_TYPE_DEFAULT) {
-					$function = substr($instructionName, 1);
+					$function = substr($instructionName, 0, 1) == '.' ? substr($instructionName, 1) : $instructionName;
 					$args = $processor->parseArguments($token, $instructionName, '');
+					$args[0] = $function;
 				} else {
 					$args = $processor->parseArguments($token, $instructionName, 's');
 					$function = $args[0];
@@ -47,7 +48,7 @@
 						throw new InstructionProcessorException($args[0] . '() does not exist', $token);
 				
 				if(!is_callable($function))
-					throw new InstructionProcessorException(($executionType & InstructionProcessor::EXECUTE_TYPE_DEFAULT ? substr($instructionName, 1) : $args[0]). '() is not callable from the current scope', $token);
+					throw new InstructionProcessorException($args[0] . '() is not callable from the current scope', $token);
 				
 				$parameters = $args;
 				if(!($executionType & InstructionProcessor::EXECUTE_TYPE_DEFAULT))
