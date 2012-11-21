@@ -37,16 +37,18 @@
 				$args = $processor->parseArguments($token, $instructionName, 'sx');
 				$constantName = substr($instructionName, 0, 1) == '.' ? substr($instructionName, 1) : $instructionName;
 				$validOperators = array('(', ')', '+', '-', '*', '/', '|', '&', '^', '>>', '<<');
-				$args = $processor->parseArguments($token, $instructionName, 'sn?snsnsnsnsnsnsnsnsnsnsn');
+				
 				foreach($args as $index => $arg) {
 					if(!$index)
 						continue;
 					if(!is_int($arg) && !in_array($arg, $validOperators))
-						throw new InstructionProcessorException('Math syntax error');
+						$math = false;
 					$calc .= $arg;
 				}
 				
-				if(($value = eval('return (' . $calc . ');')) === false)
+				if(isset($math))
+					$value = $calc;
+				else if(($value = eval('return (' . $calc . ');')) === false)
 					throw new InstructionProcessorException('Math syntax error');
 				
 				switch($args[0]) {
