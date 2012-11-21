@@ -59,6 +59,7 @@
 					if(!($this->handlerStack[$instruction] instanceof InstructionHandler))
 						throw new InstructionProcessorException('Handler for instruction "' . $matches[1] . '" does not exist or is not callable', $token);
 					$vmRetval = $this->handlerStack[$instruction]->execute($token, $matches[1], $this, $vm);
+					$token->argumentCache = array();
 					goto end;
 				} else if($this->defaultHandlerStack) { 
 					foreach($this->defaultHandlerStack as $handler) {
@@ -66,6 +67,7 @@
 							throw new InstructionProcessorException('Default Handler for instruction "' . $matches[1] . '" is invalid', $token);
 						if($handler->canExecute($token, $matches[1], $this)) {
 							$vmRetval = $handler->execute($token, $matches[1], $this, $vm, self::EXECUTE_TYPE_DEFAULT);
+							$token->argumentCache = array();
 							goto end;
 						}
 					}
@@ -91,8 +93,10 @@
 				if(substr($instruction, 0, 1) == '.')
 					$instruction = substr($instruction, 1);
 
-				if(isset($this->handlerStack[$instruction]) && $this->handlerStack[$instruction] instanceof InstructionHandlerWithRegister)
+				if(isset($this->handlerStack[$instruction]) && $this->handlerStack[$instruction] instanceof InstructionHandlerWithRegister) {
 					$this->handlerStack[$instruction]->register($token, $matches[1], $this, $vm);
+					$token->argumentCache = array();
+				}
 			}
 		}
 		
@@ -109,7 +113,9 @@
 				if(isset($this->handlerStack[$instruction])) {
 					if(!($this->handlerStack[$instruction] instanceof InlineInstructionHandler))
 						throw new InstructionProcessorException($matches[1] . ' does not support inline execution', $token);
-					return $this->handlerStack[$instruction]->execute($token, $matches[1], $this, null, self::EXECUTE_TYPE_INLINE);
+					$retval = $this->handlerStack[$instruction]->execute($token, $matches[1], $this, null, self::EXECUTE_TYPE_INLINE);
+					$token->argumentCache = array();
+					return $retval;
 				} else if($this->defaultHandlerStack) {
 					foreach($this->defaultHandlerStack as $handler) {
 						if(!($handler instanceof InlineInstructionHandler))
@@ -118,6 +124,7 @@
 							throw new InstructionProcessorException('Default handler for instruction "' . $matches[1] . '" is invalid', $token);
 						if($handler->canExecute($token, $matches[1], $this))
 							return $handler->execute($token, $matches[1], $this, null, self::EXECUTE_TYPE_DEFAULT | self::EXECUTE_TYPE_INLINE);
+						$token->argumentCache = array();
 					}
 				}
 				
@@ -135,6 +142,9 @@
 		}
 		
 		public function parseArguments(Token $origToken, $instructionName, $optionsStr) {
+			if($origToken->argumentCache)
+				return $origToken->argumentCache;
+			
 			if($optionsStr)
 				$options = str_split($optionsStr);
 			else
@@ -328,7 +338,7 @@
 			if((strpos($optionsStr, '?') !== false && $argNum < strpos($optionsStr, '?')) || ($argNum < count($options) && strpos($optionsStr, '?') === false))
 				throw new InstructionProcessorException($instructionName . ' expects ' . count($options) . ' arguments, ' . $argNum . ' given', $origToken);
 			
-			return $args;
+			return $origToken->argumentCache = $args;
 		}
 	}
 	
