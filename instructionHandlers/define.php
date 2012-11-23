@@ -38,6 +38,8 @@
 				$constantName = substr($instructionName, 0, 1) == '.' ? substr($instructionName, 1) : $instructionName;
 				$validOperators = array('(', ')', '+', '-', '*', '/', '|', '&', '^', '>>', '<<');
 				
+				$calc = "";
+				
 				foreach($args as $index => $arg) {
 					if(!$index)
 						continue;
