@@ -54,6 +54,8 @@
 						}
 					}
 				}
+				
+				return TokenVM::ERROR;
 			}
 			
 			public function register(Token $token, $instructionName, InstructionProcessor $processor, TokenVM $vm) {

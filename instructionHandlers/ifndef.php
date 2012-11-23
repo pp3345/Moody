@@ -32,7 +32,7 @@
 	
 		public function execute(Token $token, $instructionName, InstructionProcessor $processor, TokenVM $vm) {
 			$args = $processor->parseArguments($token, $instructionName, 's');
-				
+			
 			// Search jump point
 			foreach(MultiTokenInstruction::getAll('if') as $instruction) {
 				if($instruction->getToken() == $token) {
@@ -43,12 +43,14 @@
 						$instruction->setEndTokenAction(\Moody\END_TOKEN_NO_EXECUTE);
 						return TokenVM::DELETE_TOKEN;
 					}
-						
+
 					$vm->jump($instruction->getEndToken());
 					$instruction->setEndTokenAction(\Moody\END_TOKEN_EXECUTE);
 					return TokenVM::JUMP | TokenVM::DELETE_TOKEN;
 				}
 			}
+			
+			return TokenVM::ERROR;
 		}
 	
 		public function register(Token $token, $instructionName, InstructionProcessor $processor, TokenVM $vm) {
