@@ -34,7 +34,7 @@
 			
 			if($this->originalToken instanceof Token) {
 				$string .= "\r\n";
-				$string .= 'Current token before modification through token handlers:' . "\r\n";
+				$string .= 'Current token before modification by token handlers:' . "\r\n";
 				$string .= (string) $this->originalToken;
 			}
 			
