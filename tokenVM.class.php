@@ -8,6 +8,8 @@
 
 	namespace Moody {
 	
+	const MOODY_VERSION = "1.0";	
+	
 	/**
 	 * Virtual Machine that executes the token handlers
 	 */
@@ -56,7 +58,8 @@
 						if(is_callable(array($executor, 'register')))
 							$executor->register($token, $this);
 						
-						$token = $nToken;
+						if($token != $nToken)
+							throw new VMException('Token corrupted in register step', $token, $nToken);
 					}
 					
 					reset($this->handlerStack[$token->type]);
@@ -233,7 +236,8 @@
 						if(is_callable(array($executor, 'register')))
 							$executor->register($token, $this);
 						
-						$token = $nToken;
+						if($token != $nToken)
+							throw new VMException('Token corrupted in register step', $token, $nToken);
 					}
 
 					reset($this->handlerStack[$token->type]);
