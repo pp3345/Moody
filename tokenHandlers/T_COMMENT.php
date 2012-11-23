@@ -36,12 +36,19 @@
 		 */
 		public static function getInstance() {
 			if(!self::$instance)
-				self::$instance = new self;
+				new self;
 			return self::$instance;
 		}
 	
 		private function __construct() {
+			self::$instance = $this;
+			
 			TokenVM::globalRegisterTokenHandler(T_COMMENT, $this);
+			
+			foreach(get_declared_classes() as $class) {
+				if(in_array('Moody\InstructionHandler', class_implements($class)))
+					$class::getInstance();
+			}
 		}
 	
 		public function execute(Token $token, TokenVM $vm) {
@@ -49,7 +56,7 @@
 			
 			$matches = array();
 			$vmRetval = 0;
-
+			
 			if(preg_match(Configuration::get('requireinstructiondot', true) ? '~^\s*(\.([A-Za-z_:\\\0-9]+))~' : '~^\s*(\.?[A-Za-z_:\\\0-9]+)~', $content, $matches)) {
 				$instruction = strtolower($matches[1]);
 				if(substr($instruction, 0, 1) == '.')
@@ -61,7 +68,7 @@
 					$vmRetval = $this->handlerStack[$instruction]->execute($token, $matches[1], $this, $vm);
 					$token->argumentCache = array();
 					goto end;
-				} else if($this->defaultHandlerStack) { 
+				} else if($this->defaultHandlerStack) {
 					foreach($this->defaultHandlerStack as $handler) {
 						if(!($handler instanceof DefaultInstructionHandler))
 							throw new InstructionProcessorException('Default Handler for instruction "' . $matches[1] . '" is invalid', $token);
