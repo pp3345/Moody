@@ -33,7 +33,7 @@
 				if($executionType & InstructionProcessor::EXECUTE_TYPE_DEFAULT) {
 					$function = substr($instructionName, 0, 1) == '.' ? substr($instructionName, 1) : $instructionName;
 					$args = $processor->parseArguments($token, $instructionName, '');
-					$args[0] = $function;
+					$args = array_merge(array($function), $args);
 				} else {
 					$args = $processor->parseArguments($token, $instructionName, 's');
 					$function = $args[0];
@@ -51,9 +51,8 @@
 					throw new InstructionProcessorException($args[0] . '() is not callable from the current scope', $token);
 				
 				$parameters = $args;
-				if(!($executionType & InstructionProcessor::EXECUTE_TYPE_DEFAULT))
-					unset($parameters[0]);
-				
+				unset($parameters[0]);
+
 				$value = call_user_func_array($function, $parameters);
 				
 				if($executionType & InstructionProcessor::EXECUTE_TYPE_INLINE)
