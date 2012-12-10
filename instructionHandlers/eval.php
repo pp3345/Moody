@@ -41,12 +41,7 @@
 				
 				$vm = new TokenVM();
 				
-				try {
-					$tokenArray = $vm->execute($tokenArray);
-				} catch(\Exception $e) {
-					echo (string) $e . "\r\n";
-					exit;
-				}
+				$tokenArray = $vm->execute($tokenArray);
 				
 				// Let's hope <?php and ? > are where they are supposed to be
 				if(isset($addedPHPTokens)) {
