@@ -129,10 +129,11 @@
 							continue;
 						if(!($handler instanceof DefaultInstructionHandler))
 							throw new InstructionProcessorException('Default handler for instruction "' . $matches[1] . '" is invalid', $token);
-						if($handler->canExecute($token, $matches[1], $this))
+						if($handler->canExecute($token, $matches[1], $this)) {
 							$retval = $handler->execute($token, $matches[1], $this, null, self::EXECUTE_TYPE_DEFAULT | self::EXECUTE_TYPE_INLINE);
-						$token->argumentCache = array();
-						return $retval;
+							$token->argumentCache = array();
+							return $retval;
+						}
 					}
 				}
 				
