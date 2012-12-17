@@ -19,6 +19,8 @@
 	define('T_FORCED_WHITESPACE', 16392);
 	define('T_SEMICOLON', 16393);
 	define('T_EQUAL', 16394);
+	define('T_CURLY_BRACKET_OPEN', 16395);
+	define('T_CURLY_BRACKET_CLOSE', 16396);
 	if(!defined('T_INSTEADOF'))
 		define('T_INSTEADOF', 32768);
 	if(!defined('T_TRAIT'))
@@ -61,6 +63,8 @@
 				T_CONSTANT_ENCAPSED_STRING => "T_CONSTANT_ENCAPSED_STRING",
 				T_CONTINUE => "T_CONTINUE",
 				T_CURLY_OPEN => "T_CURLY_OPEN",
+				T_CURLY_BRACKET_OPEN => "T_CURLY_BRACKET_OPEN",
+				T_CURLY_BRACKET_CLOSE => "T_CURLY_BRACKET_CLOSE",
 				T_DEC => "T_DEC",
 				T_DECLARE => "T_DECLARE",
 				T_DEFAULT => "T_DEFAULT",
@@ -165,6 +169,12 @@
 							break;
 						case '=':
 							$tokenObject->type = T_EQUAL;
+							break;
+						case '{':
+							$tokenObject->type = T_CURLY_BRACKET_OPEN;
+							break;
+						case '}':
+							$tokenObject->type = T_CURLY_BRACKET_CLOSE;
 							break;
 						default:
 							$tokenObject->type = T_UNKNOWN;
