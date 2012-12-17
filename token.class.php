@@ -18,6 +18,7 @@
 	define('T_NULL', 16391);
 	define('T_FORCED_WHITESPACE', 16392);
 	define('T_SEMICOLON', 16393);
+	define('T_EQUAL', 16394);
 	if(!defined('T_INSTEADOF'))
 		define('T_INSTEADOF', 32768);
 	if(!defined('T_TRAIT'))
@@ -85,6 +86,7 @@
 				T_ENDSWITCH => "T_ENDSWITCH",
 				T_ENDWHILE => "T_ENDWHILE",
 				T_END_HEREDOC => "T_END_HEREDOC",
+				T_EQUAL => "T_EQUAL",
 				T_EVAL => "T_EVAL",
 				T_EXIT => "T_EXIT",
 				T_EXTENDS => "T_EXTENDS",
@@ -161,6 +163,9 @@
 						case ';':
 							$tokenObject->type = T_SEMICOLON;
 							break;
+						case '=':
+							$tokenObject->type = T_EQUAL;
+							break;
 						default:
 							$tokenObject->type = T_UNKNOWN;
 					}
@@ -177,7 +182,7 @@
 		}
 		
 		public function __toString() {
-			$string = 'Type: ' . self::getType($this->type) . "\r\n";
+			$string = 'Type: ' . self::getName($this->type) . "\r\n";
 			$string .= 'Content: ' . $this->content . "\r\n";
 			if($this->fileName != "Unknown") {
 				$string .= 'Origin: ' . $this->fileName . "\r\n";
