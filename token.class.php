@@ -172,8 +172,12 @@
 			return $tokenObjects;
 		}
 		
+		public static function getName($tokenType) {
+			return isset(self::$typeNames[$tokenType]) ? self::$typeNames[$tokenType] : $tokenType;
+		}
+		
 		public function __toString() {
-			$string = 'Type: ' . (isset(self::$typeNames[$this->type]) ? self::$typeNames[$this->type] : $this->type) . "\r\n";
+			$string = 'Type: ' . self::getType($this->type) . "\r\n";
 			$string .= 'Content: ' . $this->content . "\r\n";
 			if($this->fileName != "Unknown") {
 				$string .= 'Origin: ' . $this->fileName . "\r\n";
