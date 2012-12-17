@@ -63,15 +63,11 @@
 					$instruction = substr($instruction, 1);
 				
 				if(isset($this->handlerStack[$instruction])) {
-					if(!($this->handlerStack[$instruction] instanceof InstructionHandler))
-						throw new InstructionProcessorException('Handler for instruction "' . $matches[1] . '" does not exist or is not callable', $token);
 					$vmRetval = $this->handlerStack[$instruction]->execute($token, $matches[1], $this, $vm);
 					$token->argumentCache = array();
 					goto end;
 				} else if($this->defaultHandlerStack) {
 					foreach($this->defaultHandlerStack as $handler) {
-						if(!($handler instanceof DefaultInstructionHandler))
-							throw new InstructionProcessorException('Default Handler for instruction "' . $matches[1] . '" is invalid', $token);
 						if($handler->canExecute($token, $matches[1], $this)) {
 							$vmRetval = $handler->execute($token, $matches[1], $this, $vm, self::EXECUTE_TYPE_DEFAULT);
 							$token->argumentCache = array();
@@ -127,8 +123,6 @@
 					foreach($this->defaultHandlerStack as $handler) {
 						if(!($handler instanceof InlineInstructionHandler))
 							continue;
-						if(!($handler instanceof DefaultInstructionHandler))
-							throw new InstructionProcessorException('Default handler for instruction "' . $matches[1] . '" is invalid', $token);
 						if($handler->canExecute($token, $matches[1], $this)) {
 							$retval = $handler->execute($token, $matches[1], $this, null, self::EXECUTE_TYPE_DEFAULT | self::EXECUTE_TYPE_INLINE);
 							$token->argumentCache = array();
@@ -143,10 +137,14 @@
 		}
 		
 		public function registerHandler($instruction, InstructionHandler $handler) {
+			if(!($handler instanceof InstructionHandler))
+				throw new InstructionProcessorException('Handler for instruction "' . $instruction . '" is invalid');
 			$this->handlerStack[$instruction] = $handler;
 		}
 		
 		public function registerDefaultHandler(DefaultInstructionHandler $handler) {
+			if(!($handler instanceof DefaultInstructionHandler))
+				throw new InstructionProcessorException('Default handler ' . get_class($handler) . ' is invalid');
 			$this->defaultHandlerStack[] = $handler;
 		}
 		

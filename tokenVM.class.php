@@ -48,10 +48,7 @@
 			// Register tokens
 			foreach($this->tokenArray as $token) {
 				if(isset($this->handlerStack[$token->type])) {
-					foreach($this->handlerStack[$token->type] as $executor) {
-						if(!is_object($executor))
-							throw new VMException('Handler for token is not a object', $token);
-						
+					foreach($this->handlerStack[$token->type] as $executor) {						
 						// Protect token from modification by handler
 						$nToken = clone $token;
 						
@@ -82,14 +79,6 @@
 			
 			executeToken:
 			
-			//var_dump((string) $token);
-			//fread(STDIN, 1);
-
-			if(!is_int($tokenID))
-				throw new VMException('Token ID ' . $tokenID . ' is not an integer');
-			if(!($token instanceof Token))
-				throw new VMException('Element ' . $tokenID . ' is not a valid token');
-
 			$this->executedTokens[$tokenID] = true;
 			
 			$retval = 0;
@@ -112,13 +101,7 @@
 			}
 
 			executeHandler:
-
-			if(!is_object($executor))
-				throw new VMException('Handler for token is not an object', $token);
-				
-			if(!is_callable(array($executor, 'execute')))
-				throw new VMException('The execute method of the token handler does not exist or is not callable from the virtual machines\' scope', $token);
-			
+						
 			$newRetval = $executor->execute($token, $this);
 
 			if($newRetval & self::CLEAR_RETVAL)
@@ -183,6 +166,9 @@
 		}
 		
 		public static function globalRegisterTokenHandler($tokenType, TokenHandler $handler) {
+			if(!($handler instanceof TokenHandler))
+				throw new VMException('Handler for token ' . Token::getName($tokenType) . ' is invalid');
+			
 			if(!isset(self::$sHandlerStack[$tokenType]))
 				self::$sHandlerStack[$tokenType] = array($handler);
 			else
@@ -196,6 +182,9 @@
 		}
 		
 		public function registerTokenHandler($tokenType, TokenHandler $handler) {
+			if(!($handler instanceof TokenHandler))
+				throw new VMException('Handler for token ' . Token::getName($tokenType) . ' is invalid');
+			
 			if(!isset($this->handlerStack[$tokenType]))
 				$this->handlerStack[$tokenType] = array($handler);
 			else
@@ -226,10 +215,7 @@
 					// Get current position
 					$key = key($this->handlerStack[$token->type]);
 
-					foreach($this->handlerStack[$token->type] as $executor) {
-						if(!is_object($executor))
-							throw new VMException('Handler for token is not a object', $token);
-						
+					foreach($this->handlerStack[$token->type] as $executor) {						
 						// Protect token from modification by handler
 						$nToken = clone $token;
 						
