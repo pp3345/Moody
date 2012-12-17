@@ -196,6 +196,20 @@
 				
 				switch($token->type) {
 					case T_STRING:
+						if(($nextToken = current($tokens)) && $nextToken->type == T_DOUBLE_COLON) {
+							$nextToken2 = next($tokens);
+							$totalName = $token->content . "::" . $nextToken2->content;
+							if(ConstantContainer::isDefined($totalName)) {
+								if($tokenValue !== null)
+									$tokenValue .= ConstantContainer::getConstant($totalName);
+								else
+									$tokenValue = ConstantContainer::getConstant($totalName);
+								
+								$ignoreTokens = array($nextToken, $nextToken2);
+								break;
+							}
+						}
+
 						if(ConstantContainer::isDefined($token->content))
 							if($tokenValue !== null)
 								$tokenValue .= ConstantContainer::getConstant($token->content);
