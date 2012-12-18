@@ -43,7 +43,6 @@
 				throw new VMException('Virtual machine received empty token array');
 			
 			$this->tokenArray = $tokenArray;
-			$retval = 0;
 			
 			// Register tokens
 			foreach($this->tokenArray as $token) {
@@ -78,7 +77,7 @@
 			$originalToken = clone $token;
 			
 			executeToken:
-			
+
 			$this->executedTokens[$tokenID] = true;
 			
 			$retval = 0;
@@ -86,15 +85,8 @@
 			nextHandler:
 
 			if(isset($this->handlerStack[$token->type])) {
-				if(current($this->handlerStack[$token->type]) !== false) {
-					$executor = current($this->handlerStack[$token->type]);
-					next($this->handlerStack[$token->type]);
-				} else {
-					reset($this->handlerStack[$token->type]);
-					
-					// All handlers executed, execute retvals
-					goto doRetval;
-				}
+				$executor = current($this->handlerStack[$token->type]);
+				next($this->handlerStack[$token->type]);
 			} else {
 				$newArray[] = $token;
 				goto nextToken;
@@ -110,7 +102,7 @@
 				$retval |= $newRetval;
 			
 			doRetval:
-			
+
 			if($retval & self::REEXECUTE_HANDLER) {
 				$retval ^= self::REEXECUTE_HANDLER;
 				goto executeHandler;
@@ -118,10 +110,12 @@
 			
 			if($retval & self::NEXT_HANDLER) {
 				$retval ^= self::NEXT_HANDLER;
-				goto nextHandler;
+				if(current($this->handlerStack[$token->type]) !== false)
+					goto nextHandler;
 			}
 			
 			if($retval & self::REEXECUTE_TOKEN) {
+				reset($this->handlerStack[$token->type]);
 				$retval ^= self::REEXECUTE_TOKEN;
 				goto executeToken; 
 			}
@@ -150,10 +144,12 @@
 						next($this->tokenArray);
 				}
 			}
-				
-			if($retval & self::NEXT_TOKEN)
+
+			if($retval & self::NEXT_TOKEN) {
+				reset($this->handlerStack[$token->type]);
 				goto nextToken;
-			
+			}
+
 			throw new VMException('Token handler did not specify an action for the virtual machine', $token, $originalToken);
 			
 			quit:
@@ -192,7 +188,7 @@
 		}
 		
 		public function unregisterTokenHandler($tokenType, TokenHandler $handler) {
-			if(!isset($this->handlerStack[$tokenType]) || ($key = array_search($this->handlerStack[$tokenType])) === false)
+			if(!isset($this->handlerStack[$tokenType]) || ($key = array_search($handler, $this->handlerStack[$tokenType])) === false)
 				return;
 			unset($this->handlerStack[$tokenType][$key]);
 		}
