@@ -113,11 +113,17 @@
 				$file = '<?php ' . $file . ' ?>';
 			}
 			
-			return $this->executeSource($file, $fileName);
+			return $this->executeSource($file, $fileName, true);
 		}
 		
-		public function executeSource($source, $origin = "Unknown") {
-			$source = $this->executeScript(Token::tokenize($source, $origin));
+		public function executeSource($source, $origin = "Unknown", $appendT_EOF = false) {
+			$tokenArray = Token::tokenize($source, $origin);
+			if($appendT_EOF) {
+				$token = new Token;
+				$token->type = T_EOF;
+				$token->fileName = $origin;
+			}
+			$source = $this->executeScript($tokenArray);
 			
 			if(is_array($source)) {
 				$sourceString = "";

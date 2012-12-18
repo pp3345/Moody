@@ -21,6 +21,7 @@
 	define('T_EQUAL', 16394);
 	define('T_CURLY_BRACKET_OPEN', 16395);
 	define('T_CURLY_BRACKET_CLOSE', 16396);
+	define('T_EOF', 16397);
 	if(!defined('T_INSTEADOF'))
 		define('T_INSTEADOF', 32768);
 	if(!defined('T_TRAIT'))
@@ -90,6 +91,7 @@
 				T_ENDSWITCH => "T_ENDSWITCH",
 				T_ENDWHILE => "T_ENDWHILE",
 				T_END_HEREDOC => "T_END_HEREDOC",
+				T_EOF => "T_EOF",
 				T_EQUAL => "T_EQUAL",
 				T_EVAL => "T_EVAL",
 				T_EXIT => "T_EXIT",

@@ -54,9 +54,7 @@
 					$tokens = $tokensN;
 			}
 
-			end($tokens);
-
-			switch(current($tokens)->type) {
+			switch(end($tokens)->type) {
 				case T_CLOSE_TAG:
 					unset($tokens[key($tokens)]);
 					break;
@@ -66,6 +64,12 @@
 					$token->content = "<?php ";
 					$tokens[] = $token;
 			}
+			
+			// Add T_EOF
+			$token = new Token;
+			$token->type = T_EOF;
+			$token->content = $args[0];
+			$tokens[] = $token;
 
 			$vm->insertTokenArray($tokens);
 
