@@ -52,7 +52,10 @@
 					case T_STRING:
 						switch($step) {
 							case T_CLASS:
-								$class->name = strtolower($currentToken->content);
+								if($namespace = NamespaceFetcher::getInstance()->getCurrentNamespace())
+									$class->name = $namespace . "\\" . strtolower($currentToken->content);
+								else
+									$class->name = strtolower($currentToken->content);
 								break;
 							case T_EXTENDS:
 								$class->extends = $this->fetchClass(strtolower($currentToken->content));

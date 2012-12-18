@@ -253,8 +253,8 @@
 						break;
 					case T_NS_SEPARATOR:
 						$totalString = "";
-						$pos = key($tokens) - 1;
-						prev($tokens);
+						$pos = current($tokens);
+
 						// Resolve previous parts
 						while($prev = prev($tokens)) {
 							if($prev->type != T_STRING)
@@ -263,16 +263,15 @@
 							unset($args[key($args)]);
 							$totalString = $prev->content . $totalString;
 						}
-						
-						while(key($tokens) != $pos)
-							next($tokens);
+
+						while(next($tokens) != $pos);
 						
 						// Insert current token
 						$totalString .= $token->content;
 						
 						// Resolve next parts
 						while($next = next($tokens)) {
-							if($next->type != T_NS_SEPARATOR && $next->type != T_STRING)
+							if($next->type != T_NS_SEPARATOR && $next->type != T_STRING && $next->type != T_DOUBLE_COLON)
 								break;
 							$totalString .= $next->content;
 							

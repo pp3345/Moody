@@ -46,28 +46,28 @@
 					case T_STRING:
 						if($rval) {
 							if(ConstantContainer::isDefined($currentToken->content)) {
-								ConstantContainer::define($name, ConstantContainer::getConstant($currentToken->content), $class);
+								ConstantContainer::define($name, ConstantContainer::getConstant($currentToken->content), $class, true);
 							} else {
-								ConstantContainer::define($name, $currentToken->content, $class);
+								ConstantContainer::define($name, $currentToken->content, $class, true);
 							}
 						} else {
 							$name = $currentToken->content;
 						}
 						break;
 					case T_LNUMBER:
-						ConstantContainer::define($name, (int) $currentToken->content, $class);
+						ConstantContainer::define($name, (int) $currentToken->content, $class, true);
 						break;
 					case T_DNUMBER:
-						ConstantContainer::define($name, (float) $currentToken->content, $class);
+						ConstantContainer::define($name, (float) $currentToken->content, $class, true);
 						break;
 					case T_TRUE:
-						ConstantContainer::define($name, true, $class);
+						ConstantContainer::define($name, true, $class, true);
 						break;
 					case T_FALSE:
-						ConstantContainer::define($name, false, $class);
+						ConstantContainer::define($name, false, $class, true);
 						break;
 					case T_CONSTANT_ENCAPSED_STRING:
-						ConstantContainer::define($name, eval('return (' . $currentToken->content . ');'), $class);
+						ConstantContainer::define($name, eval('return (' . $currentToken->content . ');'), $class, true);
 						break;
 					case T_COMMA:
 						$rval = false;

@@ -10,6 +10,7 @@
 
 	use Moody\TokenHandlers\ClassEntry;
 	use Moody\TokenHandlers\ClassFetcher;
+	use Moody\TokenHandlers\NamespaceFetcher;
 		
 	class ConstantContainer {
 		private static $constants = array();
@@ -24,7 +25,13 @@
 			$name = strtolower($name);
 			if(strpos($name, '::')) {
 				$name = explode('::', $name, 2);
-				$class = ClassFetcher::getInstance()->fetchClass($name[0]);
+				
+				if(!($namespace = NamespaceFetcher::getInstance()->getCurrentNamespace())
+				|| ($namespace 
+					&& !($class = ClassFetcher::getInstance()->fetchClass($namespace . '\\' . $name[0])))) {
+					$class = ClassFetcher::getInstance()->fetchClass($name[0]);
+				}
+				
 				if($class) {
 					do {
 						if(isset($class->constants[$name[1]]))
@@ -41,6 +48,11 @@
 				return;
 			}
 			
+			$namespace = NamespaceFetcher::getInstance()->getCurrentNamespace();
+			
+			if($namespace && isset(self::$constants[$namespace . "\\" . $name]))
+				return self::$constants[$namespace . "\\" . $name];
+			
 			if(isset(self::$constants[$name]))
 				return self::$constants[$name];
 		}
@@ -48,8 +60,12 @@
 		public static function isDefined($name) {
 			if(strpos($name, '::')) {
 				$name = explode('::', strtolower($name), 2);
-				$class = ClassFetcher::getInstance()->fetchClass($name[0]);
-
+				if(!($namespace = NamespaceFetcher::getInstance()->getCurrentNamespace())
+				|| ($namespace 
+					&& !($class = ClassFetcher::getInstance()->fetchClass($namespace . '\\' . $name[0])))) {
+					$class = ClassFetcher::getInstance()->fetchClass($name[0]);
+				}
+				
 				if($class) {
 					do {
 						if(isset($class->constants[$name[1]]))
@@ -60,14 +76,24 @@
 				return false;
 			}
 			
+			$namespace = NamespaceFetcher::getInstance()->getCurrentNamespace();
+			
+			if($namespace && isset(self::$constants[$namespace . "\\" . strtolower($name)])) 
+				return true;
+			
 			return isset(self::$constants[strtolower($name)]);
 		}
 		
-		public static function define($name, $value, ClassEntry $class = null) {
+		public static function define($name, $value, ClassEntry $class = null, $namespace = false) {
 			if($class) {
 				$class->constants[strtolower($name)] = $value;
 			} else {
-				self::$constants[strtolower($name)] = $value;
+				if($namespace)
+					$name = NamespaceFetcher::getInstance()->getCurrentNamespace() . "\\" . strtolower($name);
+				else
+					$name = strtolower($name);
+
+				self::$constants[$name] = $value;
 			}
 		}
 		
