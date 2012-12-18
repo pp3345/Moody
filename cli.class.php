@@ -7,7 +7,7 @@
 	/****************************************************************/
 	
 	namespace Moody;
-	
+
 	/**
 	 * Command line interface for Moody
 	 */
@@ -69,7 +69,7 @@
 				}
 			}
 			
-			$this->args = getopt("", array('benchmark', 'silent'));
+			$this->args = getopt("", array('benchmark', 'silent', 'dump'));
 			
 			if(isset($executeFile)) {
 				$source = $this->executeFile($executeFile);
@@ -80,6 +80,11 @@
 				if(isset($destinationFile)) {
 					if(!file_put_contents($destinationFile, $source))
 						echo "Failed to put new source into destination file." . \PHP_EOL;
+				}
+				
+				if(isset($this->args['dump'])) {
+					echo \PHP_EOL . "Generated source: " . \PHP_EOL;
+					echo $source . \PHP_EOL;
 				}
 				
 				exit;
@@ -103,6 +108,7 @@
 			$file = file_get_contents($fileName);
 			
 			if(substr($fileName, -3) == 'mdy' || substr($fileName, -5) == "moody") {
+				Configuration::set("requireinstructiondot", false);
 				/* Satisfy the tokenizer */
 				$file = '<?php ' . $file . ' ?>';
 			}
@@ -167,7 +173,7 @@
 			throw new \ErrorException($errStr, 0, $errType, $errFile, $errLine);
 		}
 	}
-	
+
 	$cli = new CLI;
 	$cli->main($argv);
 ?>
