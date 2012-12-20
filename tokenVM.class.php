@@ -15,16 +15,17 @@
 	 */
 	class TokenVM {
 		/* VM actions (values that can be returned by token handlers) */
-		const NEXT_TOKEN = 1;			// 0b1
-		const QUIT = 2;					// 0b10
-		const NEXT_HANDLER = 4;			// 0b100
-		const ERROR = 8;				// 0b1000
-		const REEXECUTE_TOKEN = 16;		// 0b10000
-		const REEXECUTE_HANDLER = 32;	// 0b100000
-		const JUMP = 64;				// 0b1000000
-		const CLEAR_RETVAL = 128;		// 0b10000000
-		const CLEAR_ERROR = 256;		// 0b100000000
-		const DELETE_TOKEN = 512;		// 0b1000000000
+		const NEXT_TOKEN = 1;					// 0b1
+		const QUIT = 2;							// 0b10
+		const NEXT_HANDLER = 4;					// 0b100
+		const ERROR = 8;						// 0b1000
+		const REEXECUTE_TOKEN = 16;				// 0b10000
+		const REEXECUTE_HANDLER = 32;			// 0b100000
+		const JUMP = 64;						// 0b1000000
+		const CLEAR_RETVAL = 128;				// 0b10000000
+		const CLEAR_ERROR = 256;				// 0b100000000
+		const DELETE_TOKEN = 512;				// 0b1000000000
+		const JUMP_WITHOUT_DELETE_TOKEN = 1024; // 0b10000000000
 		
 		private static $sHandlerStack = array();
 		
@@ -129,7 +130,7 @@
 			if($retval & self::ERROR && !($retval & self::CLEAR_ERROR))
 				throw new VMException('Token handler returned an error', $token, $originalToken);
 			
-			if($retval & self::JUMP) {
+			if(($retval & self::JUMP) || ($retval & self::JUMP_WITHOUT_DELETE_TOKEN)) {
 				if(!($this->jump instanceof Token))
 					throw new VMException('Cannot jump to new token as it is not a token', $token, $originalToken);
 				
@@ -137,11 +138,17 @@
 					throw new VMException('Cannot jump to new token as it is not specified in current token array', $token, $originalToken);
 				
 				if(array_search($this->jump, $this->tokenArray) < key($this->tokenArray)) {
-					while(current($this->tokenArray) != $this->jump)
-						prev($this->tokenArray);
+					while(prev($this->tokenArray) != $this->jump);
 				} else if(array_search($this->jump, $this->tokenArray) > key($this->tokenArray)) {
-					while(current($this->tokenArray) != $this->jump)
-						next($this->tokenArray);
+					if($retval & self::JUMP_WITHOUT_DELETE_TOKEN) {
+						// Since the array pointer always points to execute token + 1 we have to add the current token
+						$newArray[] = current($this->tokenArray);
+						while(($jToken = next($this->tokenArray)) != $this->jump) {
+							$newArray[] = $jToken;
+						}
+					} else {
+						while(next($this->tokenArray) != $this->jump);
+					}
 				}
 			}
 
