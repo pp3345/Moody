@@ -56,6 +56,10 @@
 				}
 				
 				$this->currentNamespace[] = $namespace;
+				
+				$vm->jump($token);
+				
+				return TokenVM::JUMP_WITHOUT_DELETE_TOKEN | TokenVM::NEXT_HANDLER | TokenVM::NEXT_TOKEN;
 			} else { // T_EOF
 				$this->leaveNamespace();
 				
@@ -64,8 +68,6 @@
 
 				return TokenVM::DELETE_TOKEN | TokenVM::NEXT_TOKEN;
 			}
-			
-			return TokenVM::NEXT_HANDLER | TokenVM::NEXT_TOKEN;
 		}
 		
 		public function leaveNamespace() {
