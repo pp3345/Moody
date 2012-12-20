@@ -38,8 +38,10 @@
 				if(!strlen($args[0]))
 					throw new InstructionProcessorException('Macro name cannot be empty', $token);
 
-				$macro = new Macro(strtolower($args[0]), $args[1]);
-				$processor->registerHandler(strtolower($args[0]), $this);
+				$args[0] = strtolower($args[0]);
+				
+				$macro = new Macro($args[0], $args[1]);
+				$processor->registerHandler($args[0], $this);
 				unset($args[0], $args[1]);
 				
 				foreach($args as $arg)
@@ -109,6 +111,11 @@
 			return $tokens;
 		}
 		
+		/**
+		 * 
+		 * @param string $name
+		 * @return Macro
+		 */
 		public static function getMacro($name) {
 			if(isset(self::$macros[$name]))
 				return self::$macros[$name];
