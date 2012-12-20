@@ -42,9 +42,10 @@
 			}
 			
 			if($class) {
-				if(isset($class->constants[$name])) {
-					return $class->constants[$name];
-				}
+				do {
+					if(isset($class->constants[$name]))
+						return $class->constants[$name];
+				} while($class = $class->extends);
 				return;
 			}
 			
@@ -57,9 +58,20 @@
 				return self::$constants[$name];
 		}
 		
-		public static function isDefined($name) {
+		public static function isDefined($name, ClassEntry $class = null) {
+			$name = strtolower($name);
+			
+			if($class) {
+				do {
+					if(isset($class->constants[$name]))
+						return true;
+				} while($class = $class->extends);
+				
+				return false;
+			}
+			
 			if(strpos($name, '::')) {
-				$name = explode('::', strtolower($name), 2);
+				$name = explode('::', $name, 2);
 				if(!($namespace = NamespaceFetcher::getInstance()->getCurrentNamespace())
 				|| ($namespace 
 					&& !($class = ClassFetcher::getInstance()->fetchClass($namespace . '\\' . $name[0])))) {
@@ -78,10 +90,10 @@
 			
 			$namespace = NamespaceFetcher::getInstance()->getCurrentNamespace();
 			
-			if($namespace && isset(self::$constants[$namespace . "\\" . strtolower($name)])) 
+			if($namespace && isset(self::$constants[$namespace . "\\" . $name])) 
 				return true;
 			
-			return isset(self::$constants[strtolower($name)]);
+			return isset(self::$constants[$name]);
 		}
 		
 		public static function define($name, $value, ClassEntry $class = null, $namespace = false) {
