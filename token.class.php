@@ -22,6 +22,8 @@
 	define('T_CURLY_BRACKET_OPEN', 16395);
 	define('T_CURLY_BRACKET_CLOSE', 16396);
 	define('T_EOF', 16397);
+	define('T_SELF', 16398);
+	define('T_PARENT', 16399);
 	if(!defined('T_INSTEADOF'))
 		define('T_INSTEADOF', 32768);
 	if(!defined('T_TRAIT'))
@@ -143,12 +145,23 @@
 					$tokenObject->content = $token[1];
 					$tokenObject->line = $token[2];
 					
-					if(strtolower($tokenObject->content) == 'true')
-						$tokenObject->type = T_TRUE;
-					else if(strtolower($tokenObject->content) == 'false')
-						$tokenObject->type = T_FALSE;
-					else if(strtolower($tokenObject->content) == 'null')
-						$tokenObject->type = T_NULL;
+					switch(strtolower($tokenObject->content)) {
+						case 'true':
+							$tokenObject->type = T_TRUE;
+							break;
+						case 'false':
+							$tokenObject->type = T_FALSE;
+							break;
+						case 'null':
+							$tokenObject->type = T_NULL;
+							break;
+						case 'self':
+							$tokenObject->type = T_SELF;
+							break;
+						case 'parent':
+							$tokenObject->type = T_PARENT;
+							break;
+					}
 				} else  {
 					$tokenObject->content = $token;
 					$tokenObject->line = -1;
