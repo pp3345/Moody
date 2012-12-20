@@ -137,9 +137,11 @@
 				if(!in_array($this->jump, $this->tokenArray))
 					throw new VMException('Cannot jump to new token as it is not specified in current token array', $token, $originalToken);
 				
-				if(array_search($this->jump, $this->tokenArray) < key($this->tokenArray)) {
+				$key = array_search($this->jump, $this->tokenArray);
+				
+				if($key < key($this->tokenArray)) {
 					while(prev($this->tokenArray) != $this->jump);
-				} else if(array_search($this->jump, $this->tokenArray) > key($this->tokenArray)) {
+				} else if($key > key($this->tokenArray)) {
 					if($retval & self::JUMP_WITHOUT_DELETE_TOKEN) {
 						// Since the array pointer always points to execute token + 1 we have to add the current token
 						$newArray[] = current($this->tokenArray);
@@ -249,6 +251,16 @@
 
 		public function getTokenArray() {
 			return $this->tokenArray;
+		}
+		
+		public function moveTo(Token $token) {
+			$key = array_search($token, $this->tokenArray);
+			
+			if($key < key($this->tokenArray)) {
+				while(prev($this->tokenArray) != $token);
+			} else if($key > key($this->tokenArray)) {
+				while(next($this->tokenArray) != $token);
+			}
 		}
 	}
 	
