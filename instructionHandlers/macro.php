@@ -76,7 +76,7 @@
 	}
 	
 	class Macro {
-		private $name = "";
+		public $name = "";
 		private $code = "";
 		private $arguments = array();
 		private static $macros = array();
