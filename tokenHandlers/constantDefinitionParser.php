@@ -74,7 +74,9 @@
 				}
 			}
 			
-			return TokenVM::NEXT_HANDLER | TokenVM::NEXT_TOKEN;
+			$vm->jump($currentToken);
+			
+			return TokenVM::JUMP_WITHOUT_DELETE_TOKEN | TokenVM::NEXT_HANDLER | TokenVM::NEXT_TOKEN;
 		}
 	}
 	
