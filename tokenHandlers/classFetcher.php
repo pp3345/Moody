@@ -20,6 +20,10 @@
 	}
 	
 	class ClassFetcher implements TokenHandler {
+		/**
+		 *
+		 * @var ClassFetcher
+		 */
 		private static $instance = null;
 		private $currentClass = null;
 		private $classes = array();
@@ -75,7 +79,9 @@
 			
 			$scopeFetcher->addLeaveCallback(array($this, 'leaveClass'), $scopeFetcher->getDepth() + 1);
 			
-			return TokenVM::NEXT_HANDLER | TokenVM::NEXT_TOKEN;
+			$vm->jump($currentToken);
+			
+			return TokenVM::JUMP_WITHOUT_DELETE_TOKEN | TokenVM::NEXT_HANDLER | TokenVM::NEXT_TOKEN;
 		}
 		
 		public function getCurrentClass() {
@@ -87,7 +93,8 @@
 		}
 		
 		public function fetchClass($name) {
-			switch(strtolower($name)) {
+			$name = strtolower($name);
+			switch($name) {
 				case "self":
 					return $this->currentClass;
 				case "parent":
