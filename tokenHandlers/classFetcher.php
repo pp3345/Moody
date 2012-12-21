@@ -25,6 +25,10 @@
 		 * @var ClassFetcher
 		 */
 		private static $instance = null;
+		/**
+		 * 
+		 * @var Class
+		 */
 		private $currentClass = null;
 		private $classes = array();
 

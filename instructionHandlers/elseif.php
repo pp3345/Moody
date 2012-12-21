@@ -8,7 +8,6 @@
 	
 	namespace Moody\InstructionHandlers {
 	
-	use Moody\END_TOKEN_NO_EXECUTE;
 	use Moody\InstructionProcessorException;
 	use Moody\MultiTokenInstruction;
 	use Moody\InstructionHandlerWithRegister;
