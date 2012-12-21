@@ -15,6 +15,7 @@
 	class ClassEntry {
 		public $implements = array();
 		public $name = "";
+		public $localName = "";
 		public $extends = null;
 		public $constants = array();
 	}
@@ -60,10 +61,12 @@
 					case T_STRING:
 						switch($step) {
 							case T_CLASS:
+								$lower = strtolower($currentToken->content);
 								if($namespace = NamespaceFetcher::getInstance()->getCurrentNamespace())
-									$class->name = $namespace . "\\" . strtolower($currentToken->content);
+									$class->name = $namespace . "\\" . $lower;
 								else
-									$class->name = strtolower($currentToken->content);
+									$class->name = $lower;
+								$class->localName = $lower;
 								break;
 							case T_EXTENDS:
 								$class->extends = $this->fetchClass(strtolower($currentToken->content));
@@ -106,6 +109,10 @@
 				default:
 					return isset($this->classes[$name]) ? $this->classes[$name] : null;
 			}
+		}
+		
+		public function registerClass($name, ClassEntry $classEntry) {
+			$this->classes[$name] = $classEntry;
 		}
 	}
 	
