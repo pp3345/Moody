@@ -175,7 +175,7 @@
 		}
 
 		public static function globalUnregisterTokenHandler($tokenType, TokenHandler $handler) {
-			if(!isset(self::$sHandlerStack[$tokenType]) || ($key = array_search(self::$sHandlerStack[$tokenType])) === false)
+			if(!isset(self::$sHandlerStack[$tokenType]) || ($key = array_search($handler, self::$sHandlerStack[$tokenType])) === false)
 				return;
 			unset(self::$sHandlerStack[$tokenType][$key]);
 		}
