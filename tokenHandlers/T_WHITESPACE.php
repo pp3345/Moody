@@ -56,96 +56,94 @@
 		}
 
 		public function execute(Token $token, TokenVM $vm) {
-			if(Configuration::get('deletewhitespaces', false)) {
-				switch($token->type) {
-					case T_WHITESPACE:
-						$tokenArray = $vm->getTokenArray();
+			switch($token->type) {
+				case T_WHITESPACE:
+					$tokenArray = $vm->getTokenArray();
 
-						if(($tokenX = current($tokenArray)) && $tokenX->type == T_END_HEREDOC)
-							$this->insertForcedWhitespace($vm, true);
-						return TokenVM::NEXT_HANDLER | TokenVM::NEXT_TOKEN | TokenVM::DELETE_TOKEN;
-					case T_ECHO:
-					case T_RETURN:
-					case T_PUBLIC:
-					case T_PROTECTED:
-					case T_PRIVATE:
-					case T_STATIC:
-					case T_FINAL:
-					case T_CASE:
-					case T_CONTINUE:
-					case T_BREAK:
-					case T_THROW:
-						$tokenArray = $vm->getTokenArray();
+					if(($tokenX = current($tokenArray)) && $tokenX->type == T_END_HEREDOC)
+						$this->insertForcedWhitespace($vm, true);
+					return TokenVM::NEXT_HANDLER | TokenVM::NEXT_TOKEN | TokenVM::DELETE_TOKEN;
+				case T_ECHO:
+				case T_RETURN:
+				case T_PUBLIC:
+				case T_PROTECTED:
+				case T_PRIVATE:
+				case T_STATIC:
+				case T_FINAL:
+				case T_CASE:
+				case T_CONTINUE:
+				case T_BREAK:
+				case T_THROW:
+					$tokenArray = $vm->getTokenArray();
 
-						if($tokenX = current($tokenArray)) {
-							if($tokenX->type != T_WHITESPACE)
-								return TokenVM::NEXT_HANDLER | TokenVM::NEXT_TOKEN;
-							else if(($tokenX = next($tokenArray)) && $tokenX->type != T_CONSTANT_ENCAPSED_STRING && $tokenX->type != T_VARIABLE)
-								$this->insertForcedWhitespace($vm);
-						}
-						break;
-					case T_VARIABLE:
-						$tokenArray = $vm->getTokenArray();
+					if($tokenX = current($tokenArray)) {
+						if($tokenX->type != T_WHITESPACE)
+							return TokenVM::NEXT_HANDLER | TokenVM::NEXT_TOKEN;
+						else if(($tokenX = next($tokenArray)) && $tokenX->type != T_CONSTANT_ENCAPSED_STRING && $tokenX->type != T_VARIABLE)
+							$this->insertForcedWhitespace($vm);
+					}
+					break;
+				case T_VARIABLE:
+					$tokenArray = $vm->getTokenArray();
 
-						if($tokenX = current($tokenArray)) {
-							if($tokenX->type != T_WHITESPACE)
-								return TokenVM::NEXT_HANDLER | TokenVM::NEXT_TOKEN;
-							else if(($tokenX = next($tokenArray)) && ($tokenX->type == T_AS || $tokenX->type == T_INSTANCEOF))
-								$this->insertForcedWhitespace($vm);
-						}
-						break;
-					case T_GOTO:
-					case T_NAMESPACE:
-					case T_CONST:
-					case T_NEW:
-					case T_INSTANCEOF:
-					case T_INSTEADOF:
-					case T_CLASS:
-					case T_EXTENDS:
-					case T_FUNCTION:
-					case T_START_HEREDOC:
-					case T_USE:
-					case T_INTERFACE:
-					case T_TRAIT:
-					case T_IMPLEMENTS:
-						$this->insertForcedWhitespace($vm);
-						break;
-					case T_ELSE:
-						$tokenArray = $vm->getTokenArray();
+					if($tokenX = current($tokenArray)) {
+						if($tokenX->type != T_WHITESPACE)
+							return TokenVM::NEXT_HANDLER | TokenVM::NEXT_TOKEN;
+						else if(($tokenX = next($tokenArray)) && ($tokenX->type == T_AS || $tokenX->type == T_INSTANCEOF))
+							$this->insertForcedWhitespace($vm);
+					}
+					break;
+				case T_GOTO:
+				case T_NAMESPACE:
+				case T_CONST:
+				case T_NEW:
+				case T_INSTANCEOF:
+				case T_INSTEADOF:
+				case T_CLASS:
+				case T_EXTENDS:
+				case T_FUNCTION:
+				case T_START_HEREDOC:
+				case T_USE:
+				case T_INTERFACE:
+				case T_TRAIT:
+				case T_IMPLEMENTS:
+					$this->insertForcedWhitespace($vm);
+					break;
+				case T_ELSE:
+					$tokenArray = $vm->getTokenArray();
 
-						if($tokenX = current($tokenArray)) {
-							if($tokenX->type != T_WHITESPACE)
-								return TokenVM::NEXT_HANDLER | TokenVM::NEXT_TOKEN;
-							else if(($tokenX = next($tokenArray)) && $tokenX->type != T_CURLY_OPEN)
-								$this->insertForcedWhitespace($vm);
-						}
-						break;
-					case T_STRING:
-						$tokenArray = $vm->getTokenArray();
+					if($tokenX = current($tokenArray)) {
+						if($tokenX->type != T_WHITESPACE)
+							return TokenVM::NEXT_HANDLER | TokenVM::NEXT_TOKEN;
+						else if(($tokenX = next($tokenArray)) && $tokenX->type != T_CURLY_OPEN)
+							$this->insertForcedWhitespace($vm);
+					}
+					break;
+				case T_STRING:
+					$tokenArray = $vm->getTokenArray();
 
-						if($tokenX = current($tokenArray)) {
-							if($tokenX->type != T_WHITESPACE)
-								return TokenVM::NEXT_HANDLER | TokenVM::NEXT_TOKEN;
-							else if(($tokenX = next($tokenArray)) && ($tokenX->type == T_EXTENDS || $tokenX->type == T_INSTEADOF || $tokenX->type == T_INSTANCEOF || $tokenX->type == T_AS || $tokenX->type == T_IMPLEMENTS))
-								$this->insertForcedWhitespace($vm);
-						}
-						break;
-					case T_SEMICOLON:
-						$tokenArray = $vm->getTokenArray();
+					if($tokenX = current($tokenArray)) {
+						if($tokenX->type != T_WHITESPACE)
+							return TokenVM::NEXT_HANDLER | TokenVM::NEXT_TOKEN;
+						else if(($tokenX = next($tokenArray)) && ($tokenX->type == T_EXTENDS || $tokenX->type == T_INSTEADOF || $tokenX->type == T_INSTANCEOF || $tokenX->type == T_AS || $tokenX->type == T_IMPLEMENTS))
+							$this->insertForcedWhitespace($vm);
+					}
+					break;
+				case T_SEMICOLON:
+					$tokenArray = $vm->getTokenArray();
 
-						prev($tokenArray);
-						$tokenX = prev($tokenArray);
+					prev($tokenArray);
+					$tokenX = prev($tokenArray);
 
-						if($tokenX->type == T_END_HEREDOC)
-							$this->insertForcedWhitespace($vm, true);
-						break;
-					case T_END_HEREDOC:
-						$tokenArray = $vm->getTokenArray();
+					if($tokenX->type == T_END_HEREDOC)
+						$this->insertForcedWhitespace($vm, true);
+					break;
+				case T_END_HEREDOC:
+					$tokenArray = $vm->getTokenArray();
 
-						if(($tokenX = current($tokenArray)) && $tokenX->type != T_SEMICOLON)
-							$this->insertForcedWhitespace($vm, true);
-						break;
-				}
+					if(($tokenX = current($tokenArray)) && $tokenX->type != T_SEMICOLON)
+						$this->insertForcedWhitespace($vm, true);
+					break;
 			}
 
 			end:
