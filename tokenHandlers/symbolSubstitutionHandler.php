@@ -7,7 +7,7 @@
 	/****************************************************************/
 
 	namespace Moody\TokenHandlers {
-		
+
 	use Moody\Token;
 	use Moody\TokenVM;
 	use Moody\TokenHandler;
@@ -18,29 +18,48 @@
 
 	class SymbolSubstitutionHandler implements TokenHandler {
 		private static $instance = null;
-		
+		private static $tokens = array(T_STRING, T_NS_SEPARATOR, T_SELF, T_PARENT);
+		private $enabled = false;
+
+
 		public static function getInstance() {
 			if(!self::$instance)
 				self::$instance = new self;
 			return self::$instance;
 		}
-		
-		private function __construct() {
-			TokenVM::globalRegisterTokenHandler(T_STRING, $this);
-			TokenVM::globalRegisterTokenHandler(T_NS_SEPARATOR, $this);
-			TokenVM::globalRegisterTokenHandler(T_SELF, $this);
-			TokenVM::globalRegisterTokenHandler(T_PARENT, $this);
-		}
-		
-		public function execute(Token $token, TokenVM $vm) {
-			if(!Configuration::get("autosubstitutesymbols", true))
-				return TokenVM::NEXT_HANDLER | TokenVM::NEXT_TOKEN;
 
+		private function __construct() {
+			Configuration::registerCallback('autosubstituesymbols', true, array($this, 'invoke'));
+		}
+
+		public function invoke($value, TokenVM $tokenVM = null) {
+			if(!$value && $this->enabled) {
+				$this->enabled = false;
+				if($tokenVM) {
+					foreach(self::$tokens as $token)
+						$tokenVM->unregisterTokenHandler($token, $this);
+				} else {
+					foreach(self::$tokens as $token)
+						TokenVM::globalUnregisterTokenHandler($token, $this);
+				}
+			} else if($value && !$this->enabled) {
+				$this->enabled = true;
+				if($tokenVM) {
+					foreach(self::$tokens as $token)
+						$tokenVM->registerTokenHandler($token, $this);
+				} else {
+					foreach(self::$tokens as $token)
+						TokenVM::globalRegisterTokenHandler($token, $this);
+				}
+			}
+		}
+
+		public function execute(Token $token, TokenVM $vm) {
 			$tokenArray = $vm->getTokenArray();
-			
+
 			$deleteToken = 0;
 			$vmToken = $token;
-			
+
 			switch($token->type) {
 				case T_SELF:
 				case T_PARENT:
@@ -67,13 +86,13 @@
 					/* fallthrough */
 				case T_STRING:
 					$fullName = $token->content;
-					
+
 					if($macro = Macro::getMacro(strtolower($fullName))) {
 						$argString = "";
-						
+
 						if($macro->numArgs()) {
 							$scope = 0;
-							
+
 							for($currentToken = current($tokenArray);;$currentToken = next($tokenArray)) {
 								switch($currentToken->type) {
 									case T_ROUND_BRACKET_OPEN:
@@ -89,10 +108,10 @@
 										$argString .= $currentToken->content;
 								}
 							}
-							
+
 							$vm->moveTo(next($tokenArray));
 						}
-						
+
 						InstructionProcessor::getInstance()->callInstruction($macro->name, $vm, 0, array(), $argString);
 						return TokenVM::DELETE_TOKEN | TokenVM::NEXT_TOKEN;
 					}
@@ -126,13 +145,13 @@
 						$vm->jump($currentToken);
 						return TokenVM::NEXT_TOKEN | TokenVM::JUMP;
 					}
-					
+
 					break;
 			}
-			
+
 			return TokenVM::NEXT_TOKEN | TokenVM::NEXT_HANDLER;
 		}
 	}
-	
+
 	}
 ?>
