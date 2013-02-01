@@ -5,9 +5,9 @@
 	/* T_WHITESPACE.php                                     		*/
 	/* 2012 Yussuf Khalil                                           */
 	/****************************************************************/
-	
+
 	namespace Moody\TokenHandlers {
-	
+
 	use Moody\TokenHandler;
 	use Moody\TokenVM;
 	use Moody\Configuration;
@@ -15,55 +15,52 @@
 
 	class WhitespaceHandler implements TokenHandler {
 		private static $instance = null;
-	
+		private $enabled = false;
+		private static $tokens = array(T_WHITESPACE, T_ECHO, T_VARIABLE, T_GOTO, T_ELSE, T_NAMESPACE, T_CONST,
+										T_NEW, T_INSTANCEOF, T_INSTEADOF, T_STRING, T_CLASS, T_EXTENDS, T_PUBLIC, T_PROTECTED,
+										T_PRIVATE, T_FINAL, T_STATIC, T_FUNCTION, T_RETURN, T_CASE, T_START_HEREDOC, T_SEMICOLON,
+										T_END_HEREDOC, T_BREAK, T_CONTINUE, T_USE, T_THROW, T_INTERFACE, T_TRAIT, T_IMPLEMENTS);
+
 		public static function getInstance() {
 			if(!self::$instance)
 				self::$instance = new self;
 			return self::$instance;
 		}
-	
+
 		private function __construct() {
 			if(Configuration::get('supportwhitespacedeletion', true)) {
-				TokenVM::globalRegisterTokenHandler(T_WHITESPACE, $this);
-				TokenVM::globalRegisterTokenHandler(T_ECHO, $this);
-				TokenVM::globalRegisterTokenHandler(T_VARIABLE, $this);
-				TokenVM::globalRegisterTokenHandler(T_GOTO, $this);
-				TokenVM::globalRegisterTokenHandler(T_ELSE, $this);
-				TokenVM::globalRegisterTokenHandler(T_NAMESPACE, $this);
-				TokenVM::globalRegisterTokenHandler(T_CONST, $this);
-				TokenVM::globalRegisterTokenHandler(T_NEW, $this);
-				TokenVM::globalRegisterTokenHandler(T_INSTANCEOF, $this);
-				TokenVM::globalRegisterTokenHandler(T_INSTEADOF, $this);
-				TokenVM::globalRegisterTokenHandler(T_STRING, $this);
-				TokenVM::globalRegisterTokenHandler(T_CLASS, $this);
-				TokenVM::globalRegisterTokenHandler(T_EXTENDS, $this);
-				TokenVM::globalRegisterTokenHandler(T_PUBLIC, $this);
-				TokenVM::globalRegisterTokenHandler(T_PROTECTED, $this);
-				TokenVM::globalRegisterTokenHandler(T_PRIVATE, $this);
-				TokenVM::globalRegisterTokenHandler(T_FINAL, $this);
-				TokenVM::globalRegisterTokenHandler(T_STATIC, $this);
-				TokenVM::globalRegisterTokenHandler(T_FUNCTION, $this);
-				TokenVM::globalRegisterTokenHandler(T_RETURN, $this);
-				TokenVM::globalRegisterTokenHandler(T_CASE, $this);
-				TokenVM::globalRegisterTokenHandler(T_START_HEREDOC, $this);
-				TokenVM::globalRegisterTokenHandler(T_SEMICOLON, $this);
-				TokenVM::globalRegisterTokenHandler(T_END_HEREDOC, $this);
-				TokenVM::globalRegisterTokenHandler(T_BREAK, $this);
-				TokenVM::globalRegisterTokenHandler(T_CONTINUE, $this);
-				TokenVM::globalRegisterTokenHandler(T_USE, $this);
-				TokenVM::globalRegisterTokenHandler(T_THROW, $this);
-				TokenVM::globalRegisterTokenHandler(T_INTERFACE, $this);
-				TokenVM::globalRegisterTokenHandler(T_TRAIT, $this);
-				TokenVM::globalRegisterTokenHandler(T_IMPLEMENTS, $this);
+				Configuration::registerCallback('deletewhitespaces', false, array($this, 'invoke'));
 			}
 		}
-	
+
+		public function invoke($value, TokenVM $tokenVM = null) {
+			if(!$value && $this->enabled) {
+				$this->enabled = false;
+				if($tokenVM) {
+					foreach(self::$tokens as $token)
+						$tokenVM->unregisterTokenHandler($token, $this);
+				} else {
+					foreach(self::$tokens as $token)
+						TokenVM::globalUnregisterTokenHandler($token, $this);
+				}
+			} else if($value && !$this->enabled) {
+				$this->enabled = true;
+				if($tokenVM) {
+					foreach(self::$tokens as $token)
+						$tokenVM->registerTokenHandler($token, $this);
+				} else {
+					foreach(self::$tokens as $token)
+						TokenVM::globalRegisterTokenHandler($token, $this);
+				}
+			}
+		}
+
 		public function execute(Token $token, TokenVM $vm) {
 			if(Configuration::get('deletewhitespaces', false)) {
 				switch($token->type) {
 					case T_WHITESPACE:
 						$tokenArray = $vm->getTokenArray();
-						
+
 						if(($tokenX = current($tokenArray)) && $tokenX->type == T_END_HEREDOC)
 							$this->insertForcedWhitespace($vm, true);
 						return TokenVM::NEXT_HANDLER | TokenVM::NEXT_TOKEN | TokenVM::DELETE_TOKEN;
@@ -89,7 +86,7 @@
 						break;
 					case T_VARIABLE:
 						$tokenArray = $vm->getTokenArray();
-						
+
 						if($tokenX = current($tokenArray)) {
 							if($tokenX->type != T_WHITESPACE)
 								return TokenVM::NEXT_HANDLER | TokenVM::NEXT_TOKEN;
@@ -115,7 +112,7 @@
 						break;
 					case T_ELSE:
 						$tokenArray = $vm->getTokenArray();
-						
+
 						if($tokenX = current($tokenArray)) {
 							if($tokenX->type != T_WHITESPACE)
 								return TokenVM::NEXT_HANDLER | TokenVM::NEXT_TOKEN;
@@ -125,7 +122,7 @@
 						break;
 					case T_STRING:
 						$tokenArray = $vm->getTokenArray();
-						
+
 						if($tokenX = current($tokenArray)) {
 							if($tokenX->type != T_WHITESPACE)
 								return TokenVM::NEXT_HANDLER | TokenVM::NEXT_TOKEN;
@@ -135,16 +132,16 @@
 						break;
 					case T_SEMICOLON:
 						$tokenArray = $vm->getTokenArray();
-						
+
 						prev($tokenArray);
 						$tokenX = prev($tokenArray);
-						
+
 						if($tokenX->type == T_END_HEREDOC)
 							$this->insertForcedWhitespace($vm, true);
 						break;
 					case T_END_HEREDOC:
 						$tokenArray = $vm->getTokenArray();
-						
+
 						if(($tokenX = current($tokenArray)) && $tokenX->type != T_SEMICOLON)
 							$this->insertForcedWhitespace($vm, true);
 						break;
@@ -152,7 +149,7 @@
 			}
 
 			end:
-			
+
 			return TokenVM::NEXT_HANDLER | TokenVM::NEXT_TOKEN;
 		}
 
@@ -164,6 +161,6 @@
 			$vm->insertTokenArray(array($token));
 		}
 	}
-	
+
 	}
 ?>
