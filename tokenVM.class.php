@@ -49,14 +49,15 @@
 			foreach($this->tokenArray as $token) {
 				if(isset($this->handlerStack[$token->type])) {
 					foreach($this->handlerStack[$token->type] as $executor) {
-						// Protect token from modification by handler
-						$nToken = clone $token;
+						if(is_callable(array($executor, 'register'))) {
+							// Protect token from modification by handler
+							$nToken = clone $token;
 
-						if(is_callable(array($executor, 'register')))
 							$executor->register($token, $this);
 
-						if($token != $nToken)
-							throw new VMException('Token corrupted in register step', $token, $nToken);
+							if($token != $nToken)
+								throw new VMException('Token corrupted in register step', $token, $nToken);
+						}
 					}
 
 					reset($this->handlerStack[$token->type]);
