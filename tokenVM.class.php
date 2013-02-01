@@ -178,6 +178,8 @@
 			if(!isset(self::$sHandlerStack[$tokenType]) || ($key = array_search($handler, self::$sHandlerStack[$tokenType])) === false)
 				return;
 			unset(self::$sHandlerStack[$tokenType][$key]);
+			if(!self::$sHandlerStack[$tokenType])
+				unset(self::$sHandlerStack[$tokenType]);
 		}
 
 		public function registerTokenHandler($tokenType, TokenHandler $handler) {
@@ -194,6 +196,8 @@
 			if(!isset($this->handlerStack[$tokenType]) || ($key = array_search($handler, $this->handlerStack[$tokenType])) === false)
 				return;
 			unset($this->handlerStack[$tokenType][$key]);
+			if(!$this->handlerStack[$tokenType])
+				unset($this->handlerStack[$tokenType]);
 		}
 
 		public function jump(Token $token) {
