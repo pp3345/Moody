@@ -5,9 +5,9 @@
 	/* T_VARIABLE.php                                     			*/
 	/* 2012 Yussuf Khalil                                           */
 	/****************************************************************/
-	
+
 	namespace Moody\TokenHandlers {
-	
+
 	use Moody\TokenHandler;
 	use Moody\TokenVM;
 	use Moody\Token;
@@ -18,29 +18,52 @@
 	 */
 	class VariableHandler implements TokenHandler {
 		private static $instance = null;
+		private static $tokens = array(T_VARIABLE, T_OBJECT_OPERATOR);
 		private $variableMappings = array();
 		private $nextLetter = "A";
-	
+		private $enabled = false;
+
 		public static function getInstance() {
 			if(!self::$instance)
 				self::$instance = new self;
 			return self::$instance;
 		}
-	
+
 		private function __construct() {
-			TokenVM::globalRegisterTokenHandler(T_VARIABLE, $this);
-			TokenVM::globalRegisterTokenHandler(T_OBJECT_OPERATOR, $this);
+			Configuration::registerCallback('compressvariables', false, array($this, 'invoke'));
+		}
+
+		public function invoke($value, TokenVM $tokenVM = null) {
+			if(!$value && $this->enabled) {
+				$this->enabled = false;
+				if($tokenVM) {
+					foreach(self::$tokens as $token)
+						$tokenVM->unregisterTokenHandler($token, $this);
+				} else {
+					foreach(self::$tokens as $token)
+						TokenVM::globalUnregisterTokenHandler($token, $this);
+				}
+			} else if($value && !$this->enabled) {
+				$this->enabled = true;
+				if($tokenVM) {
+					foreach(self::$tokens as $token)
+						$tokenVM->registerTokenHandler($token, $this);
+				} else {
+					foreach(self::$tokens as $token)
+						TokenVM::globalRegisterTokenHandler($token, $this);
+				}
+			}
 		}
 
 		public function execute(Token $token, TokenVM $vm) {
 			static $forbiddenVariables = array('$this', '$_GET', '$_POST', '$_REQUEST', '$_COOKIE', '$_ENV', '$_SESSION', '$_SERVER', '$_FILES');
-			
-			if(Configuration::get('compressvariables', false) && !in_array($token->content, $forbiddenVariables)) {
+
+			if(!in_array($token->content, $forbiddenVariables)) {
 				if($token->type == T_OBJECT_OPERATOR) {
 					if(!Configuration::get('compressproperties', false))
 						return TokenVM::NEXT_HANDLER | TokenVM::NEXT_TOKEN;
 					$tokenArray = $vm->getTokenArray();
-					
+
 					$varToken = current($tokenArray);
 					if($varToken->type != T_STRING)
 						goto end;
@@ -51,13 +74,13 @@
 							goto end;
 						break;
 					}
-					
+
 					$localToken = $varToken;
-					
+
 					$localToken->content = '$' . $localToken->content;
 				} else
 					$localToken = $token;
-				
+
 				if(!isset($this->variableMappings[$localToken->content])) {
 					if(!Configuration::get('compressproperties', false)) {
 						$tokenArray = $vm->getTokenArray();
@@ -81,9 +104,9 @@
 							}
 						}
 					}
-					
+
 					map:
-					
+
 					do {
 						$this->mapVariable($localToken->content, is_int($this->nextLetter) ? '$i' . $this->nextLetter : '$' . $this->nextLetter);
 
@@ -102,7 +125,7 @@
 			}
 
 			end:
-			
+
 			return TokenVM::NEXT_HANDLER | TokenVM::NEXT_TOKEN;
 		}
 
@@ -110,6 +133,6 @@
 			return $this->variableMappings[$originalVariable] = $newName;
 		}
 	}
-	
+
 	}
 ?>
