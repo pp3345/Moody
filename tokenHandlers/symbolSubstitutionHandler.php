@@ -29,7 +29,7 @@
 		}
 
 		private function __construct() {
-			Configuration::registerCallback('autosubstituesymbols', true, array($this, 'invoke'));
+			Configuration::registerCallback('autosubstitutesymbols', true, array($this, 'invoke'));
 		}
 
 		public function invoke($value, TokenVM $tokenVM = null) {

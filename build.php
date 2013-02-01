@@ -77,7 +77,7 @@
 		Configuration::set('compressproperties', true);
 		Configuration::set('deletecomments', true);
 	} else {
-		Configuration::set('autosubstituesymbols', false);
+		Configuration::set('autosubstitutesymbols', false);
 	}
 
 	try {
