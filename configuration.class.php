@@ -36,7 +36,10 @@
 			if(!is_callable($callback)) {
 				throw new MoodyException('Bad configuration callback');
 			}
-			self::$callbacks[strtolower($path)] = $callback;
+
+			$path = strtolower($path);
+
+			self::$callbacks[$path] = $callback;
 			if($invoke) {
 				$callback(isset(self::$configuration[$path]) ? self::$configuration[$path] : $defaultValue);
 			}
