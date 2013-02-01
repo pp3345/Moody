@@ -30,7 +30,6 @@
 		private static $sHandlerStack = array();
 
 		private $handlerStack = array();
-		private $executedTokens = array();
 		private $tokenArray = array();
 		private $jump = null;
 
@@ -79,8 +78,6 @@
 			$originalToken = clone $token;
 
 			executeToken:
-
-			$this->executedTokens[$tokenID] = true;
 
 			$retval = 0;
 
@@ -165,10 +162,6 @@
 			quit:
 
 			return $newArray;
-		}
-
-		public function hasExecuted($tokenID) {
-			return isset($this->executedTokens[$tokenID]);
 		}
 
 		public static function globalRegisterTokenHandler($tokenType, TokenHandler $handler) {
