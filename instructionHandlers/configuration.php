@@ -5,44 +5,44 @@
 	/* configuration.php                 					        */
 	/* 2012 Yussuf Khalil                                           */
 	/****************************************************************/
-	
+
 	namespace Moody\InstructionHandlers {
-	
+
 	use Moody\Configuration;
 	use Moody\InstructionProcessorException;
 	use Moody\InlineInstructionHandler;
 	use Moody\Token;
 	use Moody\TokenHandlers\InstructionProcessor;
 	use Moody\TokenVM;
-	
+
 	class ConfigurationHandler implements InlineInstructionHandler {
 		private static $instance = null;
-	
+
 		private function __construct() {
 			InstructionProcessor::getInstance()->registerHandler('config', $this);
 			InstructionProcessor::getInstance()->registerHandler('configuration', $this);
 		}
-	
+
 		public static function getInstance() {
 			if(!self::$instance)
 				self::$instance = new self;
 			return self::$instance;
 		}
-	
+
 		public function execute(Token $token, $instructionName, InstructionProcessor $processor, TokenVM $vm = null, $executionType = 0) {
 			$args = $processor->parseArguments($token, $instructionName, 's?x');
-	
+
 			if(!isset($args[1])) {
 				if($executionType & InstructionProcessor::EXECUTE_TYPE_INLINE)
 					return Configuration::get($args[0], null);
 				$token->content = Token::makeEvaluatable(Configuration::get($args[0], null));
 				return 0;
 			} else
-				Configuration::set($args[0], $args[1]);
+				Configuration::set($args[0], $args[1], $vm);
 
 			return TokenVM::DELETE_TOKEN;
 		}
 	}
-	
+
 	}
 ?>
