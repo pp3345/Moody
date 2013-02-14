@@ -5,9 +5,9 @@
 	/* define.php                 					                */
 	/* 2012 Yussuf Khalil                                           */
 	/****************************************************************/
-	
+
 	namespace Moody\InstructionHandlers {
-	
+
 	use Moody\DefaultInstructionHandler;
 	use Moody\ConstantContainer;
 	use Moody\InstructionHandler;
@@ -15,17 +15,17 @@
 	use Moody\TokenHandlers\InstructionProcessor;
 	use Moody\TokenVM;
 	use Moody\InstructionProcessorException;
-	
+
 	class DefineHandler implements InstructionHandler, DefaultInstructionHandler {
 		private static $instance = null;
-		
+
 		private function __construct() {
 			InstructionProcessor::getInstance()->registerHandler('define', $this);
 			InstructionProcessor::getInstance()->registerHandler('def', $this);
 			InstructionProcessor::getInstance()->registerHandler('d', $this);
 			InstructionProcessor::getInstance()->registerDefaultHandler($this);
 		}
-		
+
 		public static function getInstance() {
 			if(!self::$instance)
 				self::$instance = new self;
@@ -37,9 +37,9 @@
 				$args = $processor->parseArguments($token, $instructionName, 'sx');
 				$constantName = substr($instructionName, 0, 1) == '.' ? substr($instructionName, 1) : $instructionName;
 				$validOperators = array('(', ')', '+', '-', '*', '/', '|', '&', '^', '>>', '<<');
-				
+
 				$calc = "";
-				
+
 				foreach($args as $index => $arg) {
 					if(!$index)
 						continue;
@@ -47,12 +47,12 @@
 						$math = false;
 					$calc .= $arg;
 				}
-				
+
 				if(isset($math))
 					$value = $calc;
 				else if(($value = eval('return (' . $calc . ');')) === false)
 					throw new InstructionProcessorException('Math syntax error');
-				
+
 				switch($args[0]) {
 					case '=':
 						ConstantContainer::define($constantName, $value);
@@ -92,20 +92,20 @@
 				$args = $processor->parseArguments($token, $instructionName, 'sx');
 				ConstantContainer::define($args[0], $args[1]);
 			}
-			
+
 			return TokenVM::DELETE_TOKEN;
 		}
 
 	 	public function canExecute(Token $token, $instructionName, InstructionProcessor $processor) {
 	 		$args = $processor->parseArguments($token, $instructionName, '');
-	 		
+
 	 		$validOperators = array('=', '.=', '+=', '-=', '*=', '/=', '|=', '&=', '^=', '<<=', '>>=');
-	 		
-	 		if(in_array($args[0], $validOperators) && !($args[0] != '=' && !ConstantContainer::isDefined(substr($instructionName, 0, 1) == '.' ? substr($instructionName, 1) : $instructionName)))
+
+	 		if($args && in_array($args[0], $validOperators) && !($args[0] != '=' && !ConstantContainer::isDefined(substr($instructionName, 0, 1) == '.' ? substr($instructionName, 1) : $instructionName)))
 	 			return true;
 	 		return false;
 		}
 	}
-	
+
 	}
 ?>
