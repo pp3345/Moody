@@ -12,7 +12,7 @@
 	use Moody\TokenVM;
 	use Moody\Token;
 	use Moody\ConstantContainer;
-		
+
 	class ConstantDefinitionHandler implements TokenHandler {
 		private static $instance = null;
 
@@ -28,11 +28,11 @@
 
 		public function execute(Token $token, TokenVM $vm) {
 			$tokenArray = $vm->getTokenArray();
-			
+
 			$rval = false;
-			
+
 			$class = ClassFetcher::getInstance()->getCurrentClass();
-			
+
 			// Although the pointer of the VM token array always points to the next token we can simply use next() because there always has to be a T_WHITESPACE after a T_CONST
 			while($currentToken = next($tokenArray)) {
 				switch($currentToken->type) {
@@ -73,12 +73,12 @@
 						$rval = false;
 				}
 			}
-			
+
 			$vm->jump($currentToken);
-			
+
 			return TokenVM::JUMP_WITHOUT_DELETE_TOKEN | TokenVM::NEXT_HANDLER | TokenVM::NEXT_TOKEN;
 		}
 	}
-	
+
 	}
 ?>

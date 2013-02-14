@@ -11,10 +11,10 @@
 	use Moody\TokenHandler;
 	use Moody\TokenVM;
 	use Moody\Token;
-				
+
 	class NamespaceFetcher implements TokenHandler {
 		/**
-		 * 
+		 *
 		 * @var NamespaceFetcher
 		 */
 		private static $instance = null;
@@ -33,9 +33,9 @@
 		public function execute(Token $token, TokenVM $vm) {
 			if($token->type == T_NAMESPACE) {
 				$tokenArray = $vm->getTokenArray();
-				
+
 				$namespace = "";
-				
+
 				for($token = current($tokenArray);;$token = next($tokenArray)) {
 					switch($token->type) {
 						case T_NS_SEPARATOR:
@@ -54,31 +54,31 @@
 							break 2;
 					}
 				}
-				
+
 				$this->currentNamespace[] = $namespace;
-				
+
 				$vm->jump($token);
-				
+
 				return TokenVM::JUMP_WITHOUT_DELETE_TOKEN | TokenVM::NEXT_HANDLER | TokenVM::NEXT_TOKEN;
 			} else { // T_EOF
 				$this->leaveNamespace();
-				
+
 				if(count($this->currentNamespace) == 1)
 					$vm->unregisterTokenHandler(T_EOF, $this);
 
 				return TokenVM::DELETE_TOKEN | TokenVM::NEXT_TOKEN;
 			}
 		}
-		
+
 		public function leaveNamespace() {
 			end($this->currentNamespace);
 			unset($this->currentNamespace[key($this->currentNamespace)]);
 		}
-		
+
 		public function getCurrentNamespace() {
 			return end($this->currentNamespace);
 		}
 	}
-	
+
 	}
 ?>
