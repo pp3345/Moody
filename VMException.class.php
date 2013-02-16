@@ -13,12 +13,10 @@
 	 */
 	class VMException extends \Exception {
 		private $token;
-		private $originalToken;
 		
-		public function __construct($message, Token $token = null, Token $originalToken = null) {
+		public function __construct($message, Token $token = null) {
 			$this->message = $message;
 			$this->token = $token;
-			$this->originalToken = $originalToken;
 		}
 		
 		public function __toString() {
@@ -31,13 +29,7 @@
 				$string .= 'Current token:' . "\r\n";
 				$string .= (string) $this->token;
 			}
-			
-			if($this->originalToken instanceof Token) {
-				$string .= "\r\n";
-				$string .= 'Current token before modification by token handlers:' . "\r\n";
-				$string .= (string) $this->originalToken;
-			}
-			
+						
 			return $string;
 		}
 	}

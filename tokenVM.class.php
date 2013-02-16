@@ -75,8 +75,6 @@
 			$tokenID = $token->id;
 			next($this->tokenArray);
 
-			$originalToken = clone $token;
-
 			executeToken:
 
 			$retval = 0;
@@ -126,14 +124,14 @@
 				goto quit;
 
 			if($retval & self::ERROR && !($retval & self::CLEAR_ERROR))
-				throw new VMException('Token handler returned an error', $token, $originalToken);
+				throw new VMException('Token handler returned an error', $token);
 
 			if(($retval & self::JUMP) || ($retval & self::JUMP_WITHOUT_DELETE_TOKEN)) {
 				if(!($this->jump instanceof Token))
-					throw new VMException('Cannot jump to new token as it is not a token', $token, $originalToken);
+					throw new VMException('Cannot jump to new token as it is not a token', $token);
 
 				if(!in_array($this->jump, $this->tokenArray))
-					throw new VMException('Cannot jump to new token as it is not specified in current token array', $token, $originalToken);
+					throw new VMException('Cannot jump to new token as it is not specified in current token array', $token);
 
 				$key = array_search($this->jump, $this->tokenArray);
 
@@ -157,7 +155,7 @@
 				goto nextToken;
 			}
 
-			throw new VMException('Token handler did not specify an action for the virtual machine', $token, $originalToken);
+			throw new VMException('Token handler did not specify an action for the virtual machine', $token);
 
 			quit:
 
