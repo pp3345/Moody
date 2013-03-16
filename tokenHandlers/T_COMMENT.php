@@ -73,13 +73,15 @@
 				
 				if(isset($this->handlerStack[$instruction])) {
 					$vmRetval = $this->handlerStack[$instruction]->execute($token, $matches[1], $this, $vm);
-					$token->argumentCache = array();
+                    if($token->haveDynamicArguments)
+					   $token->argumentCache = array();
 					goto end;
 				} else if($this->defaultHandlerStack) {
 					foreach($this->defaultHandlerStack as $handler) {
 						if($handler->canExecute($token, $matches[1], $this)) {
 							$vmRetval = $handler->execute($token, $matches[1], $this, $vm, self::EXECUTE_TYPE_DEFAULT);
-							$token->argumentCache = array();
+                            if($token->haveDynamicArguments)
+							    $token->argumentCache = array();
 							goto end;
 						}
 					}
@@ -107,7 +109,8 @@
 
 				if(isset($this->handlerStack[$instruction]) && $this->handlerStack[$instruction] instanceof InstructionHandlerWithRegister) {
 					$this->handlerStack[$instruction]->register($token, $matches[1], $this, $vm);
-					$token->argumentCache = array();
+                    if($token->haveDynamicArguments)
+					   $token->argumentCache = array();
 				}
 			}
 		}
@@ -126,7 +129,8 @@
 					if(!($this->handlerStack[$instruction] instanceof InlineInstructionHandler))
 						throw new InstructionProcessorException($matches[1] . ' does not support inline execution', $token);
 					$retval = $this->handlerStack[$instruction]->execute($token, $matches[1], $this, null, self::EXECUTE_TYPE_INLINE);
-					$token->argumentCache = array();
+                    if($token->haveDynamicArguments)
+					   $token->argumentCache = array();
 					return $retval;
 				} else if($this->defaultHandlerStack) {
 					foreach($this->defaultHandlerStack as $handler) {
@@ -134,7 +138,8 @@
 							continue;
 						if($handler->canExecute($token, $matches[1], $this)) {
 							$retval = $handler->execute($token, $matches[1], $this, null, self::EXECUTE_TYPE_DEFAULT | self::EXECUTE_TYPE_INLINE);
-							$token->argumentCache = array();
+                            if($token->haveDynamicArguments)
+							 $token->argumentCache = array();
 							return $retval;
 						}
 					}
@@ -205,6 +210,8 @@
 				
 				switch($token->type) {
 					case T_STRING:
+                        $origToken->haveDynamicArguments = true;
+                        
 						if(($nextToken = current($tokens)) && $nextToken->type == T_DOUBLE_COLON) {
 							$nextToken2 = next($tokens);
 							$totalName = $token->content . "::" . $nextToken2->content;
@@ -262,6 +269,7 @@
 						break;
 					case T_NS_SEPARATOR:
 						$totalString = "";
+                        $origToken->haveDynamicArguments = true;
 
 						$prev = prev($tokens);
 						if($prev && $prev->type == T_STRING) {
@@ -292,6 +300,7 @@
 							$tokenValue .= $totalString;
 						break;
 					case T_COMMENT:
+                        $origToken->haveDynamicArguments = true;
 						if($tokenValue !== null)
 							$tokenValue .= $this->inlineExecute($token);
 						else
