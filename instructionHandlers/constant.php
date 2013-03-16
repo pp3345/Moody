@@ -35,7 +35,7 @@
 
 		public function execute(Token $token, $instructionName, InstructionProcessor $processor, TokenVM $vm = null, $executionType = 0) {
 			if($executionType & InstructionProcessor::EXECUTE_TYPE_DEFAULT)
-				$args = array($instructionName[0] == '.' ? substr($instructionName, 1) : $instructionName);
+				$args = array($instructionName);
 			else
 				$args = $processor->parseArguments($token, $instructionName, 's');
 
@@ -56,7 +56,7 @@
 			if($processor->parseArguments($token, $instructionName, ''))
 				return false;
 
-			if(!ConstantContainer::isDefined($instructionName[0] == '.' ? substr($instructionName, 1) : $instructionName))
+			if(!ConstantContainer::isDefined($instructionName))
 				return false;
 
 			return true;

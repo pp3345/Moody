@@ -29,13 +29,13 @@
 	
 		public function execute(Token $token, $instructionName, InstructionProcessor $processor, TokenVM $vm = null, $executionType = 0) {
 			// New macro definition
-			if(strtolower($instructionName) == '.macro') {
+			if(strtolower($instructionName) == 'macro') {
 				if($executionType & InstructionProcessor::EXECUTE_TYPE_INLINE)
 					throw new InstructionProcessorException($instructionName . ' does not support inline execution', $token);
 				
 				$args = $processor->parseArguments($token, $instructionName, 'ss');
 				
-				if(!strlen($args[0]))
+				if(!$args[0])
 					throw new InstructionProcessorException('Macro name cannot be empty', $token);
 
 				$args[0] = strtolower($args[0]);
@@ -49,11 +49,8 @@
 				
 				return TokenVM::DELETE_TOKEN;
 			}
-			
-			// Macro insertion
-			$macroName = substr(strtolower($instructionName), 1);
-			
-			$macro = Macro::getMacro($macroName);
+						
+			$macro = Macro::getMacro($instructionName);
 			if(!$macro)
 				throw new InstructionProcessorException('Call to bad macro', $token);
 			
@@ -117,6 +114,7 @@
 		 * @return Macro
 		 */
 		public static function getMacro($name) {
+		    $name = strtolower($name);
 			if(isset(self::$macros[$name]))
 				return self::$macros[$name];
 		}

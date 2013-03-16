@@ -35,7 +35,7 @@
 		public function execute(Token $token, $instructionName, InstructionProcessor $processor, TokenVM $vm = null, $executionType = 0) {
 			if($executionType & InstructionProcessor::EXECUTE_TYPE_DEFAULT) {
 				$args = $processor->parseArguments($token, $instructionName, 'sx');
-				$constantName = substr($instructionName, 0, 1) == '.' ? substr($instructionName, 1) : $instructionName;
+				$constantName = $instructionName;
 				$validOperators = array('(', ')', '+', '-', '*', '/', '|', '&', '^', '>>', '<<');
 
 				$calc = "";
@@ -101,7 +101,7 @@
 
 	 		$validOperators = array('=', '.=', '+=', '-=', '*=', '/=', '|=', '&=', '^=', '<<=', '>>=');
 
-	 		if($args && in_array($args[0], $validOperators) && !($args[0] != '=' && !ConstantContainer::isDefined(substr($instructionName, 0, 1) == '.' ? substr($instructionName, 1) : $instructionName)))
+	 		if($args && in_array($args[0], $validOperators) && !($args[0] != '=' && !ConstantContainer::isDefined($instructionName)))
 	 			return true;
 	 		return false;
 		}

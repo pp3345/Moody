@@ -54,7 +54,9 @@
 		public function callInstruction($instructionName, TokenVM $vm, $executeType = 0, $args = array(), $argString = "") {
 			$token = new Token;
 			$token->type = T_COMMENT;
-			$token->content = "#." . $instructionName . " " . $argString;
+            $token->instruction = $instructionName;
+            if($argString)
+			     $token->content = "#" . $instructionName . " " . $argString;
 			$token->fileName = "Moody Instruction Processor Direct Call";
 			$token->argumentCache = $args;
 			return $executeType == self::EXECUTE_TYPE_INLINE ? $this->inlineExecute($token) : $this->execute($token, $vm);
@@ -66,20 +68,22 @@
 			$matches = array();
 			$vmRetval = 0;
 			
-			if(preg_match(Configuration::get('requireinstructiondot', true) ? '~^\s*(\.([A-Za-z_:\\\0-9]+))~' : '~^\s*(\.?[A-Za-z_:\\\0-9]+)~', $content, $matches)) {
-				$instruction = strtolower($matches[1]);
-				if(substr($instruction, 0, 1) == '.')
-					$instruction = substr($instruction, 1);
-				
-				if(isset($this->handlerStack[$instruction])) {
-					$vmRetval = $this->handlerStack[$instruction]->execute($token, $matches[1], $this, $vm);
+            if($token->instruction || preg_match(Configuration::get('requireinstructiondot', true) ? '~^\s*(\.([A-Za-z_:\\\0-9]+))~' : '~^\s*(\.?[A-Za-z_:\\\0-9]+)~', $content, $matches)) {
+			    if(!$token->instruction) {
+    				$token->instruction = strtolower($matches[1]);
+    				if(substr($token->instruction, 0, 1) == '.')
+    					$token->instruction = substr($token->instruction, 1);
+                }
+                
+				if(isset($this->handlerStack[$token->instruction])) {
+					$vmRetval = $this->handlerStack[$token->instruction]->execute($token, $token->instruction, $this, $vm);
                     if($token->haveDynamicArguments)
 					   $token->argumentCache = array();
 					goto end;
 				} else if($this->defaultHandlerStack) {
 					foreach($this->defaultHandlerStack as $handler) {
-						if($handler->canExecute($token, $matches[1], $this)) {
-							$vmRetval = $handler->execute($token, $matches[1], $this, $vm, self::EXECUTE_TYPE_DEFAULT);
+						if($handler->canExecute($token, $token->instruction, $this)) {
+							$vmRetval = $handler->execute($token, $token->instruction, $this, $vm, self::EXECUTE_TYPE_DEFAULT);
                             if($token->haveDynamicArguments)
 							    $token->argumentCache = array();
 							goto end;
@@ -88,7 +92,7 @@
 				}
 				
 				if(!Configuration::get('ignoreunknowninstruction', false))
-					throw new InstructionProcessorException('Unknown instruction "' . $matches[1] . '"', $token);
+					throw new InstructionProcessorException('Unknown instruction "' . $token->instruction . '"', $token);
 			} else if(Configuration::get('deletecomments', true))
 				$vmRetval = TokenVM::DELETE_TOKEN;
 	
@@ -102,13 +106,15 @@
 				
 			$matches = array();
 			
-			if(preg_match(Configuration::get('requireinstructiondot', true) ? '~^\s*(\.([A-Za-z_:\\\0-9]+))~' : '~^\s*(\.?[A-Za-z_:\\\0-9]+)~', $content, $matches)) {
-				$instruction = strtolower($matches[1]);
-				if(substr($instruction, 0, 1) == '.')
-					$instruction = substr($instruction, 1);
+			if($token->instruction || preg_match(Configuration::get('requireinstructiondot', true) ? '~^\s*(\.([A-Za-z_:\\\0-9]+))~' : '~^\s*(\.?[A-Za-z_:\\\0-9]+)~', $content, $matches)) {
+			    if(!$token->instruction) {
+    				$token->instruction = strtolower($matches[1]);
+    				if(substr($token->instruction, 0, 1) == '.')
+    					$token->instruction = substr($token->instruction, 1);
+                }
 
-				if(isset($this->handlerStack[$instruction]) && $this->handlerStack[$instruction] instanceof InstructionHandlerWithRegister) {
-					$this->handlerStack[$instruction]->register($token, $matches[1], $this, $vm);
+				if(isset($this->handlerStack[$token->instruction]) && $this->handlerStack[$token->instruction] instanceof InstructionHandlerWithRegister) {
+					$this->handlerStack[$token->instruction]->register($token, $token->instruction, $this, $vm);
                     if($token->haveDynamicArguments)
 					   $token->argumentCache = array();
 				}
@@ -120,15 +126,17 @@
 				
 			$matches = array();
 				
-			if(preg_match(Configuration::get('requireinstructiondot', true) ? '~^\s*(\.([A-Za-z_:\\\0-9]+))~' : '~^\s*(\.?[A-Za-z_:\\\0-9]+)~', $content, $matches)) {
-				$instruction = strtolower($matches[1]);
-				if(substr($instruction, 0, 1) == '.')
-					$instruction = substr($instruction, 1);
+			if($token->instruction || preg_match(Configuration::get('requireinstructiondot', true) ? '~^\s*(\.([A-Za-z_:\\\0-9]+))~' : '~^\s*(\.?[A-Za-z_:\\\0-9]+)~', $content, $matches)) {
+				if(!$token->instruction) {
+    				$token->instruction = strtolower($matches[1]);
+    				if(substr($token->instruction, 0, 1) == '.')
+    					$token->instruction = substr($token->instruction, 1);
+                }
 			
-				if(isset($this->handlerStack[$instruction])) {
-					if(!($this->handlerStack[$instruction] instanceof InlineInstructionHandler))
-						throw new InstructionProcessorException($matches[1] . ' does not support inline execution', $token);
-					$retval = $this->handlerStack[$instruction]->execute($token, $matches[1], $this, null, self::EXECUTE_TYPE_INLINE);
+				if(isset($this->handlerStack[$token->instruction])) {
+					if(!($this->handlerStack[$token->instruction] instanceof InlineInstructionHandler))
+						throw new InstructionProcessorException($token->instruction . ' does not support inline execution', $token);
+					$retval = $this->handlerStack[$token->instruction]->execute($token, $token->instruction, $this, null, self::EXECUTE_TYPE_INLINE);
                     if($token->haveDynamicArguments)
 					   $token->argumentCache = array();
 					return $retval;
@@ -136,8 +144,8 @@
 					foreach($this->defaultHandlerStack as $handler) {
 						if(!($handler instanceof InlineInstructionHandler))
 							continue;
-						if($handler->canExecute($token, $matches[1], $this)) {
-							$retval = $handler->execute($token, $matches[1], $this, null, self::EXECUTE_TYPE_DEFAULT | self::EXECUTE_TYPE_INLINE);
+						if($handler->canExecute($token, $token->instruction, $this)) {
+							$retval = $handler->execute($token, $token->instruction, $this, null, self::EXECUTE_TYPE_DEFAULT | self::EXECUTE_TYPE_INLINE);
                             if($token->haveDynamicArguments)
 							 $token->argumentCache = array();
 							return $retval;
@@ -171,16 +179,12 @@
 			else
 				$options = array();
 			
-			if(!strpos($origToken->content, $instructionName))
+			if(!stripos($origToken->content, $instructionName))
 				throw new InstructionProcessorException('Token corrupted', $origToken);
 			
-			if(substr($origToken->content, 0, 2) == '/*')
-				$content = substr($origToken->content, 2, strrpos($origToken->content, '*/') - 2);
-			else if(substr($origToken->content, 0, 1) == '#')
-				$content = substr($origToken->content, 1);
-			else
-				$content = substr($origToken->content, 2);
-			$instructionArgs = substr($content, strpos($content, $instructionName) + strlen($instructionName));
+            $instructionArgs = substr($origToken->content, stripos($origToken->content, $instructionName) + strlen($instructionName));
+            if(strpos($origToken->content, "/*") === 0)
+                $instructionArgs = substr($instructionArgs, 0, strlen($instructionArgs) - 2);
 
 			// Tokenize
 			$tokens = Token::tokenize('<?php ' . $instructionArgs . ' ?>', 'Moody Argument Parser');

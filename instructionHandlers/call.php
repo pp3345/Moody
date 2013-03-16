@@ -31,7 +31,7 @@
 	
 			public function execute(Token $token, $instructionName, InstructionProcessor $processor, TokenVM $vm = null, $executionType = 0) {
 				if($executionType & InstructionProcessor::EXECUTE_TYPE_DEFAULT) {
-					$function = substr($instructionName, 0, 1) == '.' ? substr($instructionName, 1) : $instructionName;
+					$function = $instructionName;
 					$args = $processor->parseArguments($token, $instructionName, '');
 					$args = array_merge(array($function), $args);
 				} else {
@@ -64,8 +64,6 @@
 			}
 
 			public function canExecute(Token $token, $instructionName, InstructionProcessor $processor) {
-				if(substr($instructionName, 0, 1) == '.')
-					$instructionName = substr($instructionName, 1);
 				if(strpos($instructionName, '::')) {
 					$parts = explode('::', $instructionName, 2);
 					if(!method_exists($parts[0], $parts[1]))
