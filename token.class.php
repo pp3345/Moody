@@ -39,6 +39,7 @@
 		public $line = 0;
 		public $content = "";
 		public $argumentCache = array();
+        public $haveDynamicArguments = false;
 		private static $tokens = 0;
 		private static $files = 0;
 		private static $typeNames = array(
