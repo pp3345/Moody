@@ -173,7 +173,7 @@
 		public function parseArguments(Token $origToken, $instructionName, $optionsStr) {
 			if($origToken->argumentCache)
 				return $origToken->argumentCache;
-			
+
 			if($optionsStr)
 				$options = str_split($optionsStr);
 			else
@@ -188,7 +188,7 @@
 
 			// Tokenize
 			$tokens = Token::tokenize('<?php ' . $instructionArgs . ' ?>', 'Moody Argument Parser');
-			
+			            
 			foreach($tokens as $token)
 				if($token->type == T_COMMA) 
 					$useCommaSeperator = true;
@@ -203,7 +203,7 @@
 			foreach($tokens as $token) {
 				if(isset($parseLastArg))
 					goto parseArg;
-				
+
 				if($token->type == T_OPEN_TAG
 				|| $token->type == T_CLOSE_TAG
 				|| $token->type == T_ROUND_BRACKET_OPEN
@@ -211,7 +211,7 @@
 				|| $token->type == T_WHITESPACE
 				|| in_array($token, $ignoreTokens))
 					continue;
-				
+
 				switch($token->type) {
 					case T_STRING:
                         $origToken->haveDynamicArguments = true;
@@ -275,13 +275,17 @@
 						$totalString = "";
                         $origToken->haveDynamicArguments = true;
 
+                        if(current($tokens) != $token)
+                            while(next($tokens) != $token);
+                        
 						$prev = prev($tokens);
 						if($prev && $prev->type == T_STRING) {
 							$totalString = $prev->content . $token->content;
 							end($args);
 							unset($args[key($args)]);
-							next($tokens);
 						}
+                        
+                        next($tokens);
 
 						// Resolve next parts
 						while($next = next($tokens)) {
