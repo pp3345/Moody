@@ -188,7 +188,9 @@
 
 			// Tokenize
 			$tokens = Token::tokenize('<?php ' . $instructionArgs . ' ?>', 'Moody Argument Parser');
-			            
+			
+            unset($tokens[0], $tokens[1]);
+                                    
 			foreach($tokens as $token)
 				if($token->type == T_COMMA) 
 					$useCommaSeperator = true;
