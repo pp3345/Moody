@@ -29,7 +29,7 @@
 		}
 	
 		public function execute(Token $token, $instructionName, InstructionProcessor $processor, TokenVM $vm) {
-			$args = $processor->parseArguments($token, $instructionName, 'ss');
+			$args = $processor->parseArguments($token, $instructionName, 'vv');
 
 			if(!class_exists('Moody\TokenHandlers\VariableHandler'))
 				throw new InstructionProcessorException('Variable mapping is not available as the token handler for T_VARIABLE is not currently loaded', $token);

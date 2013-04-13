@@ -359,6 +359,12 @@
 							else
 								throw new InstructionProcessorException('Illegal argument ' . ($argNum + 1). ' for ' . $instructionName . ': ' . gettype($tokenValue) . ' ' . (string) $tokenValue . ' given, bool expected' , $origToken);
 							break;
+						case 'v':
+							if((is_string($tokenValue) && $tokenValue[0] == '$') || $tokenValue === null)
+								$args[] = $tokenValue;
+							else
+								throw new InstructionProcessorException('Illegal argument ' . ($argNum + 1). ' for ' . $instructionName . ': ' . gettype($tokenValue) . ' ' . (string) $tokenValue . ' given, variable expected' , $origToken);
+							break;
 						case 'x':
 							$args[] = $tokenValue;
 					}
