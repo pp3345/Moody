@@ -51,7 +51,7 @@
 				if(isset($math))
 					$value = $calc;
 				else if(($value = eval('return (' . $calc . ');')) === false)
-					throw new InstructionProcessorException('Math syntax error');
+					throw new InstructionProcessorException('Math syntax error', $token);
 
 				switch($args[0]) {
 					case '=':
