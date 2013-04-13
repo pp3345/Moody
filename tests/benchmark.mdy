@@ -1,0 +1,9 @@
+#.i = 0
+
+#.label 'start'
+
+#.i += 1
+
+#.if i < 10000
+	#.goto 'start'
+#.endif

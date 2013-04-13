@@ -1,0 +1,27 @@
+#guess = #rand 0 40
+#tries = 0
+#maxTries = 4
+
+#echo 'Guess a number' "\n"
+
+#label 'start'
+	#tries += 1
+
+	#echo "Please enter a number and press enter: "
+	#userNumber = #number #input
+
+	#if userNumber == guess
+		#echo 'Congratulations!' "\n"
+		#halt
+	#elseif userNumber > guess
+		#echo 'Too high!' "\n"
+	#else
+		#echo 'Too low!' "\n"
+	#endif
+
+	#if tries >= maxTries
+		#echo 'Too many tries!' "\n"
+		#halt
+	#endif
+
+	#goto 'start'
