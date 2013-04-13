@@ -200,6 +200,8 @@
 			reset($tokenArray);
 			$nextElement = current($tokenArray);
 
+			$shiftTokens = array();
+
 			while($token = current($this->tokenArray)) {
 				$shiftTokens[] = $token;
 				unset($this->tokenArray[key($this->tokenArray)]);
