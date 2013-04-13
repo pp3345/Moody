@@ -9,8 +9,8 @@
 	namespace Moody\InstructionHandlers {
 
 	use Moody\Configuration;
-	use Moody\InstructionProcessorException;
-	use Moody\InlineInstructionHandler;
+
+		use Moody\InlineInstructionHandler;
 	use Moody\Token;
 	use Moody\TokenHandlers\InstructionProcessor;
 	use Moody\TokenVM;

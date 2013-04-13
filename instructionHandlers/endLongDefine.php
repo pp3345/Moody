@@ -11,7 +11,7 @@
 		use Moody\Token;
 		use Moody\TokenHandlers\InstructionProcessor;
 		use Moody\TokenVM;
-		use Moody\InstructionProcessorException;
+
 		use Moody\MultiTokenInstruction;
 		use Moody\ConstantContainer;
 	

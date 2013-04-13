@@ -7,8 +7,8 @@
 	/****************************************************************/
 	
 	namespace Moody\InstructionHandlers {
-	
-		use Moody\InstructionProcessorException;
+
+
 		use Moody\InlineInstructionHandler;
 		use Moody\Token;
 		use Moody\TokenHandlers\InstructionProcessor;

@@ -9,8 +9,8 @@
 	namespace Moody\InstructionHandlers {
 
 	use Moody\DefaultInstructionHandler;
-	use Moody\InstructionHandler;
-	use Moody\InstructionProcessorException;
+
+		use Moody\InstructionProcessorException;
 	use Moody\InlineInstructionHandler;
 	use Moody\ConstantContainer;
 	use Moody\Token;
