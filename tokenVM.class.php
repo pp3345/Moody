@@ -66,7 +66,6 @@
 			if(!($token = current($this->tokenArray)))
 				goto quit;
 
-			$tokenID = $token->id;
 			next($this->tokenArray);
 
 			executeToken:
@@ -107,7 +106,6 @@
 
 			if($retval & self::REEXECUTE_TOKEN) {
 				reset($this->handlerStack[$token->type]);
-				$retval ^= self::REEXECUTE_TOKEN;
 				goto executeToken;
 			}
 
