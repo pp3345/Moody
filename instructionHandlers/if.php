@@ -40,8 +40,7 @@
 						throw new InstructionProcessorException('Invalid end token for ' . $instructionName . ' - Probably you forgot an endif?', $token);
 			
 					$cond = "";
-					$result = false;
-					
+
 					// Build parsable condition
 					foreach($args as $arg) {
 						if(is_string($arg) && strlen($arg) && strtolower($arg) !== "true" && strtolower($arg) !== "false") {

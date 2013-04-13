@@ -57,7 +57,6 @@
 		public function execute(Token $token, TokenVM $vm) {
 			$tokenArray = $vm->getTokenArray();
 
-			$deleteToken = 0;
 			$vmToken = $token;
 
 			switch($token->type) {
