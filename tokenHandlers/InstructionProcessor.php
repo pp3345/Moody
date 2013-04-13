@@ -193,7 +193,7 @@
                                     
 			foreach($tokens as $token)
 				if($token->type == T_COMMA) 
-					$useCommaSeperator = true;
+					$useCommaSeparator = true;
 			
 			$argNum = 0;
 			$optionsOffset = 0;
@@ -325,7 +325,7 @@
 							$tokenValue = $token->content;
 				}
 				
-				if(isset($useCommaSeperator))
+				if(isset($useCommaSeparator))
 					continue;
 				
 				parseArg:
