@@ -52,11 +52,12 @@
 		}
 		
 		public function callInstruction($instructionName, TokenVM $vm, $executeType = 0, $args = array(), $argString = "") {
+			$instructionName = strtolower($instructionName);
+
 			$token = new Token;
 			$token->type = T_COMMENT;
             $token->instruction = $instructionName;
-            if($argString)
-			     $token->content = "#" . $instructionName . " " . $argString;
+			$token->content = "#" . $instructionName . " " . $argString;
 			$token->fileName = "Moody Instruction Processor Direct Call";
 			$token->argumentCache = $args;
 			return $executeType == self::EXECUTE_TYPE_INLINE ? $this->inlineExecute($token) : $this->execute($token, $vm);
