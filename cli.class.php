@@ -122,6 +122,7 @@
 				$token = new Token;
 				$token->type = T_EOF;
 				$token->fileName = $origin;
+				$tokenArray[] = $token;
 			}
 			$source = $this->executeScript($tokenArray);
 			

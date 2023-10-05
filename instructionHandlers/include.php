@@ -48,6 +48,7 @@
 					$token = new Token;
 					$token->type = T_CLOSE_TAG;
 					$token->content = " ?>";
+					$token->fileName = $args[0];
 					$tokensN = array($token);
 					foreach($tokens as $token)
 						$tokensN[] = $token;
@@ -62,13 +63,14 @@
 					$token = new Token;
 					$token->type = T_OPEN_TAG;
 					$token->content = "<?php ";
+					$token->fileName = $args[0];
 					$tokens[] = $token;
 			}
 			
 			// Add T_EOF
 			$token = new Token;
 			$token->type = T_EOF;
-			$token->content = $args[0];
+			$token->fileName = $args[0];
 			$tokens[] = $token;
 
 			$vm->insertTokenArray($tokens);
