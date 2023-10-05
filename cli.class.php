@@ -173,6 +173,9 @@
 		}
 		
 		public function errorHandler($errType, $errStr, $errFile, $errLine) {
+			if($errType == E_DEPRECATED || $errType == E_STRICT)
+				return false;
+
 			if($this->inExecute)
 				throw new MoodyException($errStr, $errType);
 			
