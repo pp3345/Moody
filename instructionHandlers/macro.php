@@ -114,7 +114,7 @@
 		 * @return Macro
 		 */
 		public static function getMacro($name) {
-		    $name = strtolower($name);
+			$name = strtolower($name);
 			if(isset(self::$macros[$name]))
 				return self::$macros[$name];
 		}
