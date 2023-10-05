@@ -20,6 +20,7 @@
 		private static $instance = null;
 		private static $tokens = array(T_VARIABLE, T_OBJECT_OPERATOR);
 		private $variableMappings = array();
+		private $untouchable = array();
 		private $nextLetter = "A";
 		private $enabled = false;
 
@@ -61,7 +62,7 @@
 			if(!in_array($token->content, $forbiddenVariables)) {
 				if($token->type == T_OBJECT_OPERATOR) {
 					if(!Configuration::get('compressproperties', false))
-						return TokenVM::NEXT_HANDLER | TokenVM::NEXT_TOKEN;
+						goto end;
 					$tokenArray = $vm->getTokenArray();
 
 					$varToken = current($tokenArray);
@@ -78,31 +79,61 @@
 					$localToken = $varToken;
 
 					$localToken->content = '$' . $localToken->content;
-				} else
+					$objectvar = true;
+					$classaccess = true;
+				} else {
+					$tokenArray = $vm->getTokenArray();
+					prev($tokenArray);
+					while($tokenX = prev($tokenArray)) {
+						if($tokenX->type == T_WHITESPACE)
+							continue;
+						if($tokenX->type == T_PAAMAYIM_NEKUDOTAYIM)
+							$classaccess = true;
+						break;
+					}
+
 					$localToken = $token;
+				}
+
+				if(isset($this->untouchable[$localToken->content]))
+					goto end;
 
 				if(!isset($this->variableMappings[$localToken->content])) {
-					if(!Configuration::get('compressproperties', false)) {
+					if(!Configuration::get('compressaccessible', false) && isset($classaccess)) {
+						$this->untouchable[$localToken->content] = true;
+						goto end;
+					}
+
+					if(!Configuration::get('compressproperties', false) || !Configuration::get('compressaccessible', false)) {
 						$tokenArray = $vm->getTokenArray();
 						prev($tokenArray);
 						while($tokenX = prev($tokenArray)) {
 							switch($tokenX->type) {
 								case T_STATIC:
 									$static = true;
-									goto map;
+									$prop = true;
+									continue 2;
 								default:
-									if(!isset($static) && isset($prop))
-										goto end;
+									if(isset($prop)) {
+										if(!isset($static) && !Configuration::get('compressproperties', false))
+											goto end;
+										if(!isset($private) && !Configuration::get('compressaccessible', false)) {
+											$this->untouchable[$localToken->content] = true;
+											goto end;
+										}
+									}
 									goto map;
+								case T_PRIVATE:
+									$private = true;
 								case T_PUBLIC:
 								case T_PROTECTED:
-								case T_PRIVATE:
 									$prop = true;
 								case T_WHITESPACE:
 								case T_FORCED_WHITESPACE:
 									continue 2;
 							}
 						}
+
 					}
 
 					map:
@@ -121,10 +152,14 @@
 					} while(count(array_keys($this->variableMappings, $this->variableMappings[$localToken->content])) > 1);
 				}
 
-				$localToken->content = isset($varToken) ? substr($this->variableMappings[$localToken->content], 1) : $this->variableMappings[$localToken->content];
-			}
+				$localToken->content = $this->variableMappings[$localToken->content];
 
-			end:
+				end:
+
+				if(isset($objectvar)) {
+					$localToken->content = substr($localToken->content, 1);
+				}
+			}
 
 			return TokenVM::NEXT_HANDLER | TokenVM::NEXT_TOKEN;
 		}
