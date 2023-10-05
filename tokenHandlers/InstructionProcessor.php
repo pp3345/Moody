@@ -56,7 +56,7 @@
 
 			$token = new Token;
 			$token->type = T_COMMENT;
-            $token->instruction = $instructionName;
+			$token->instruction = $instructionName;
 			$token->content = "#" . $instructionName . " " . $argString;
 			$token->fileName = "Moody Instruction Processor Direct Call";
 			$token->argumentCache = $args;
@@ -69,24 +69,24 @@
 			$matches = array();
 			$vmRetval = 0;
 			
-            if($token->instruction || preg_match(Configuration::get('requireinstructiondot', true) ? '~^\s*(\.([A-Za-z_:\\\0-9]+))~' : '~^\s*(\.?[A-Za-z_:\\\0-9]+)~', $content, $matches)) {
-			    if(!$token->instruction) {
-    				$token->instruction = strtolower($matches[1]);
-    				if(substr($token->instruction, 0, 1) == '.')
-    					$token->instruction = substr($token->instruction, 1);
-                }
-                
+			if($token->instruction || preg_match(Configuration::get('requireinstructiondot', true) ? '~^\s*(\.([A-Za-z_:\\\0-9]+))~' : '~^\s*(\.?[A-Za-z_:\\\0-9]+)~', $content, $matches)) {
+				if(!$token->instruction) {
+					$token->instruction = strtolower($matches[1]);
+					if(substr($token->instruction, 0, 1) == '.')
+						$token->instruction = substr($token->instruction, 1);
+				}
+				
 				if(isset($this->handlerStack[$token->instruction])) {
 					$vmRetval = $this->handlerStack[$token->instruction]->execute($token, $token->instruction, $this, $vm);
-                    if($token->haveDynamicArguments)
+					if($token->haveDynamicArguments)
 					   $token->argumentCache = array();
 					goto end;
 				} else if($this->defaultHandlerStack) {
 					foreach($this->defaultHandlerStack as $handler) {
 						if($handler->canExecute($token, $token->instruction, $this)) {
 							$vmRetval = $handler->execute($token, $token->instruction, $this, $vm, self::EXECUTE_TYPE_DEFAULT);
-                            if($token->haveDynamicArguments)
-							    $token->argumentCache = array();
+							if($token->haveDynamicArguments)
+								$token->argumentCache = array();
 							goto end;
 						}
 					}
@@ -108,15 +108,15 @@
 			$matches = array();
 			
 			if($token->instruction || preg_match(Configuration::get('requireinstructiondot', true) ? '~^\s*(\.([A-Za-z_:\\\0-9]+))~' : '~^\s*(\.?[A-Za-z_:\\\0-9]+)~', $content, $matches)) {
-			    if(!$token->instruction) {
-    				$token->instruction = strtolower($matches[1]);
-    				if(substr($token->instruction, 0, 1) == '.')
-    					$token->instruction = substr($token->instruction, 1);
-                }
+				if(!$token->instruction) {
+					$token->instruction = strtolower($matches[1]);
+					if(substr($token->instruction, 0, 1) == '.')
+						$token->instruction = substr($token->instruction, 1);
+				}
 
 				if(isset($this->handlerStack[$token->instruction]) && $this->handlerStack[$token->instruction] instanceof InstructionHandlerWithRegister) {
 					$this->handlerStack[$token->instruction]->register($token, $token->instruction, $this, $vm);
-                    if($token->haveDynamicArguments)
+					if($token->haveDynamicArguments)
 					   $token->argumentCache = array();
 				}
 			}
@@ -129,16 +129,16 @@
 				
 			if($token->instruction || preg_match(Configuration::get('requireinstructiondot', true) ? '~^\s*(\.([A-Za-z_:\\\0-9]+))~' : '~^\s*(\.?[A-Za-z_:\\\0-9]+)~', $content, $matches)) {
 				if(!$token->instruction) {
-    				$token->instruction = strtolower($matches[1]);
-    				if(substr($token->instruction, 0, 1) == '.')
-    					$token->instruction = substr($token->instruction, 1);
-                }
+					$token->instruction = strtolower($matches[1]);
+					if(substr($token->instruction, 0, 1) == '.')
+						$token->instruction = substr($token->instruction, 1);
+				}
 			
 				if(isset($this->handlerStack[$token->instruction])) {
 					if(!($this->handlerStack[$token->instruction] instanceof InlineInstructionHandler))
 						throw new InstructionProcessorException($token->instruction . ' does not support inline execution', $token);
 					$retval = $this->handlerStack[$token->instruction]->execute($token, $token->instruction, $this, null, self::EXECUTE_TYPE_INLINE);
-                    if($token->haveDynamicArguments)
+					if($token->haveDynamicArguments)
 					   $token->argumentCache = array();
 					return $retval;
 				} else if($this->defaultHandlerStack) {
@@ -147,7 +147,7 @@
 							continue;
 						if($handler->canExecute($token, $token->instruction, $this)) {
 							$retval = $handler->execute($token, $token->instruction, $this, null, self::EXECUTE_TYPE_DEFAULT | self::EXECUTE_TYPE_INLINE);
-                            if($token->haveDynamicArguments)
+							if($token->haveDynamicArguments)
 							 $token->argumentCache = array();
 							return $retval;
 						}
@@ -183,15 +183,15 @@
 			if(!stripos($origToken->content, $instructionName))
 				throw new InstructionProcessorException('Token corrupted', $origToken);
 			
-            $instructionArgs = substr($origToken->content, stripos($origToken->content, $instructionName) + strlen($instructionName));
-            if(strpos($origToken->content, "/*") === 0)
-                $instructionArgs = substr($instructionArgs, 0, strlen($instructionArgs) - 2);
+			$instructionArgs = substr($origToken->content, stripos($origToken->content, $instructionName) + strlen($instructionName));
+			if(strpos($origToken->content, "/*") === 0)
+				$instructionArgs = substr($instructionArgs, 0, strlen($instructionArgs) - 2);
 
 			// Tokenize
 			$tokens = Token::tokenize('<?php ' . $instructionArgs . ' ?>', 'Moody Argument Parser');
 			
-            unset($tokens[0], $tokens[1]);
-                                    
+			unset($tokens[0], $tokens[1]);
+									
 			foreach($tokens as $token)
 				if($token->type == T_COMMA) 
 					$useCommaSeparator = true;
@@ -217,8 +217,8 @@
 
 				switch($token->type) {
 					case T_STRING:
-                        $origToken->haveDynamicArguments = true;
-                        
+						$origToken->haveDynamicArguments = true;
+						
 						if(($nextToken = current($tokens)) && $nextToken->type == T_DOUBLE_COLON) {
 							$nextToken2 = next($tokens);
 							$totalName = $token->content . "::" . $nextToken2->content;
@@ -276,19 +276,19 @@
 						break;
 					case T_NS_SEPARATOR:
 						$totalString = "";
-                        $origToken->haveDynamicArguments = true;
+						$origToken->haveDynamicArguments = true;
 
-                        if(current($tokens) != $token)
-                            while(next($tokens) != $token);
-                        
+						if(current($tokens) != $token)
+							while(next($tokens) != $token);
+						
 						$prev = prev($tokens);
 						if($prev && $prev->type == T_STRING) {
 							$totalString = $prev->content . $token->content;
 							end($args);
 							unset($args[key($args)]);
 						}
-                        
-                        next($tokens);
+						
+						next($tokens);
 
 						// Resolve next parts
 						while($next = next($tokens)) {
@@ -311,7 +311,7 @@
 							$tokenValue .= $totalString;
 						break;
 					case T_COMMENT:
-                        $origToken->haveDynamicArguments = true;
+						$origToken->haveDynamicArguments = true;
 						if($tokenValue !== null)
 							$tokenValue .= $this->inlineExecute($token);
 						else
